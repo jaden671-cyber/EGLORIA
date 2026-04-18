@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>News | EGLORIA</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;400;600&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #131313 40%, #0c0c0c 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        header {
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-img {
+            width: 40px;
+            height: 40px;
+            border-radius: 5px;
+        }
+
+        .logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #ffffff;
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+        }
+
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-button {
+            background: rgba(255, 255, 255, 0.15);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 0.8rem 1.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .dropdown-button:hover {
+            background: rgba(255, 255, 255, 0.25);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background: rgba(0, 0, 0, 0.95);
+            min-width: 250px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+            padding: 1rem 0;
+            z-index: 1;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+            top: 100%;
+            right: 0;
+            margin-top: 0.5rem;
+        }
+
+        .dropdown-content.show {
+            display: block;
+        }
+
+        .dropdown-category {
+            padding: 0.5rem 1.5rem;
+            color: #ffffff;
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .dropdown-item {
+            padding: 0.75rem 1.5rem;
+            color: #a0a0a0;
+            text-decoration: none;
+            display: block;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .dropdown-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            padding-left: 2rem;
+        }
+
+        .profile-dropdown-menu {
+            position: absolute;
+            right: 0;
+            top: calc(100% + 0.8rem);
+            width: 220px;
+            background: rgba(3, 11, 24, 0.98);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 18px;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.35);
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(-8px);
+            pointer-events: none;
+            transition: opacity 0.2s ease, transform 0.2s ease;
+            z-index: 1001;
+        }
+
+        .profile-dropdown-menu.show {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        .profile-dropdown-header {
+            padding: 1rem 1rem 0.5rem;
+            color: #a0a0a0;
+            font-size: 0.75rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        .dropdown-badge {
+            float: right;
+            background: #1b6cff;
+            color: #ffffff;
+            border-radius: 999px;
+            padding: 0.15rem 0.6rem;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .profile-dropdown-item {
+            display: block;
+            width: 100%;
+            padding: 0.95rem 1rem;
+            color: #e7eaf3;
+            font-weight: 600;
+            text-decoration: none;
+            background: transparent;
+            border: none;
+            text-align: left;
+            cursor: pointer;
+        }
+
+        .nav-links {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            gap: 1.75rem;
+            align-items: center;
+            margin: 0 1.5rem;
+        }
+
+        .nav-links a {
+            color: #a0a0a0;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: #ffffff;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .login-button {
+            padding: 0.75rem 1.25rem;
+            border-radius: 8px;
+        }
+
+        .profile-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 999px;
+            padding: 0.45rem 0.75rem;
+            color: #ffffff;
+            text-decoration: none;
+        }
+
+        .nav-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+        }
+
+        .profile-name {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .cta-button {
+            background: rgba(255, 255, 255, 0.15);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 0.8rem 1.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        .cta-button:hover {
+            background: rgba(255, 255, 255, 0.25);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: #a0a0a0;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: #ffffff;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .login-button {
+            padding: 0.75rem 1.25rem;
+            border-radius: 8px;
+        }
+
+        .profile-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 999px;
+            padding: 0.45rem 0.75rem;
+            color: #ffffff;
+            text-decoration: none;
+        }
+
+        .nav-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+        }
+
+        .profile-name {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 2rem;
+        }
+
+        nav a {
+            color: #a0a0a0;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        nav a:hover {
+            color: #ffffff;
+        }
+
+        .page-head {
+            padding: 10rem 2rem 4rem;
+            text-align: center;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .page-head h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3.5rem;
+            color: #ffffff;
+            margin-bottom: 1rem;
+        }
+
+        .page-head p {
+            color: #c0c0c0;
+            font-size: 1.05rem;
+            max-width: 760px;
+            margin: 0 auto;
+        }
+
+        .news-section {
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto 4rem;
+            \n
+        }
+
+        .section-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            color: #ffffff;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .news-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .news-item {
+            background: rgba(0, 0, 0, 0.45);
+            border: 1px solid rgba(255, 255, 255, 0.952);
+            border-radius: 18px;
+            padding: 1.75rem;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.25);
+            transition: transform 0.25s ease, border-color 0.25s ease;
+        }
+
+        .featured-section {
+            margin-top: 3rem;
+            background: rgba(0, 0, 0, 0.35);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 24px;
+            padding: 2rem;
+        }
+
+        .featured-top {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .featured-card,
+        .featured-small {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 18px;
+            overflow: hidden;
+            position: relative;
+            color: #ffffff;
+        }
+
+        .featured-card {
+            min-height: 520px;
+            display: flex;
+            align-items: flex-end;
+        }
+
+        .featured-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .featured-card .card-content {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            padding: 1.8rem;
+            background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.9) 100%);
+        }
+
+        .featured-small img {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .featured-small .card-content {
+            padding: 1.4rem;
+        }
+
+        .featured-card h3,
+        .featured-small h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .featured-card p,
+        .featured-small p {
+            color: #c0c0c0;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .featured-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+
+        .featured-small {
+            min-height: 320px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .editors-picks {
+            margin: 3rem 0;
+        }
+
+        .editors-title {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-family: 'Orbitron', sans-serif;
+            color: #fbe400;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .editors-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1rem;
+        }
+
+        .editor-card {
+            position: relative;
+            border-radius: 18px;
+            overflow: hidden;
+            min-height: 320px;
+            background: rgba(0, 0, 0, 0.45);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+        }
+
+        .editor-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .editor-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(0, 0, 0, 0.15) 0%, rgba(0, 0, 0, 0.9) 70%);
+        }
+
+        .editor-content {
+            position: absolute;
+            bottom: 1.25rem;
+            left: 1.25rem;
+            right: 1.25rem;
+            color: #ffffff;
+            z-index: 1;
+        }
+
+        .editor-label {
+            display: inline-block;
+            margin-bottom: 0.75rem;
+            padding: 0.35rem 0.9rem;
+            background: #fcc72a;
+            color: #0f0f0f;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            letter-spacing: 0.1rem;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        .editor-card h4 {
+            margin: 0 0 0.5rem;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.05rem;
+            line-height: 1.2;
+        }
+
+        .editor-card p {
+            margin: 0;
+            color: #d0d0d0;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        @media (max-width: 900px) {
+            .featured-top {
+                grid-template-columns: 1fr;
+            }
+
+            .featured-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .featured-small .card-content {
+            flex: 1;
+        }
+
+        .featured-meta {
+            margin-top: 1rem;
+            color: #ffffff;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+
+        @media (max-width: 900px) {
+            .featured-top {
+                grid-template-columns: 1fr;
+            }
+
+            .featured-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .news-item:hover {
+            transform: translateY(-4px);
+            border-color: rgba(253, 255, 254, 0.575);
+        }
+
+        .news-item h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.3rem;
+            color: #ffffff;
+            margin-bottom: 1rem;
+        }
+
+        .news-item p {
+            color: #c0c0c0;
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
+        }
+
+        .news-image {
+            margin-bottom: 1rem;
+            border-radius: 15px;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .news-image img {
+            width: 100%;
+            display: block;
+            object-fit: cover;
+            min-height: 160px;
+        }
+
+        .news-meta {
+            color: #4d4d4d;
+            font-size: 0.85rem;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+        }
+
+        footer {
+            padding: 2rem;
+            text-align: center;
+            color: #808080;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            header {
+                flex-wrap: wrap;
+                justify-content: center;
+                row-gap: 0.85rem;
+            }
+
+            .logo-container {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .nav-links {
+                width: 100%;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 1rem;
+                margin: 0;
+            }
+
+            .nav-actions {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .page-head h1 {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="logo-container">
+            <img src="c:\Users\kopano\Downloads\EGL GLOW.png" alt="EGLORIA Logo" class="logo-img">
+            <div class="logo">EGLORIA</div>
+            <div class="dropdown">
+                <button class="dropdown-button" onclick="toggleDropdown()">☰</button>
+                <div class="dropdown-content" id="dropdownMenu">
+
+                    <div class="dropdown-category">News & Media</div>
+                    <a href="news.html" class="dropdown-item">News</a>
+                    <a href="community.html" class="dropdown-item">Community Clips</a>
+                    <a href="gfx-gallery.html" class="dropdown-item">GFX Gallery</a>
+                    <a href="changelog.html" class="dropdown-item">Changelog</a>
+
+                    <div class="dropdown-category">Transfers & Teams</div>
+                    <a href="teams.html" class="dropdown-item">Teams</a>
+                    <a href="transfers.html" class="dropdown-item">Transfers</a>
+                    <a href="budgets.html" class="dropdown-item">Budgets</a>
+                    <a href="tierlist.html" class="dropdown-item">Tierlist</a>
+
+                    <div class="dropdown-category">Resources (soon)</div>
+                    <a href="features.html" class="dropdown-item">Features</a>
+                    <a href="pricing.html" class="dropdown-item">Plans & Pricing</a>
+                    <a href="tackyfy-bot.html" class="dropdown-item">EGL Assistant Bot</a>
+                    <a href="wiki-guides.html" class="dropdown-item">Wiki & Guides</a>
+
+                    <div class="dropdown-category">Support Us</div>
+                    <a href="#advertise" class="dropdown-item">Advertise</a>
+                </div>
+            </div>
+        </div>
+        <nav class="nav-links">
+            <a href="Elite Global League Homepage.html">Home</a>
+            <a href="news.html">News</a>
+            <a href="profile designer.html">Shop</a>
+            <a href="Stats.html">League</a>
+            <a href="live.html">Live</a>
+            <a href="community.html">Community</a>
+        </nav>
+        <div class="nav-actions" id="navProfile">
+            <a href="login.html?redirect=news.html" class="cta-button login-button">Login</a>
+        </div>
+    </header>
+
+    <main>
+        <section class="page-head">
+            <h1>News</h1>
+            <p>Stay up to date with the latest from the EGLORIA community — match reports, transfer updates, analysis,
+                and announcements all in one place.
+            </p>
+        </section>
+
+        <section class="news-section">
+            <div class="section-title">Latest News</div>
+            <div class="news-grid">
+                <div class="news-item">
+                    <h3>ATALANTA | COPPA ITALIA CHAMPIONS</h3>
+                    <p>After that humiliating loss in Serie A, managed to secure a 3-2 win and are now winners of the
+                        cup.
+                        All players are proud of their win and revenge. Fang, who is the manager, dominated once again.
+                    </p>
+                    <div class="news-image">
+                        <img src="c:\Users\kopano\Downloads\EGL WEBSITE\Coppa Italia winners.png"
+                            alt="ATALANTA | COPPA ITALIA CHAMPIONS image">
+                    </div>
+                    <div class="news-meta">EGL Staff · 10 Apr 2026 · 12 min read</div>
+                </div>
+                <div class="news-item">
+                    <h3>THE LAST DANCE | ASAKA RETURNS</h3>
+                    <p>After dominating S1 with unforgettable performances and clutch moments, Asaka built a legacy few
+                        could match. Defenders feared him. Fans admired him. Opponents respected him. Now the story
+                        reaches
+                        its final chapter.</p>
+                    <div class="news-image">
+                        <img src="c:\Users\kopano\Downloads\EGL WEBSITE\CERZIX_GFX_ASAKA.png"
+                            alt="THE LAST DANCE | ASAKA RETURNS image">
+                    </div>
+                    <div class="news-meta">EGL Staff · 8 Apr 2026 · 8 min read</div>
+                </div>
+                <div class="news-item">
+                    <h3>IKHIRA Arrival</h3>
+                    <p>Get your popcorn, get your huzz — the IKHIRA arrival is here and the community is buzzing.
+                    </p>
+                    <div class="news-image">
+                        <img src="c:\Users\kopano\Downloads\EGL WEBSITE\ihkiraaa.png" alt="IKHIRA Arrival image">
+                    </div>
+                    <div class="news-meta">EGL Staff · 5 Apr 2026 · 6 min read</div>
+                </div>
+                <div class="news-item">
+                    <h3>Copa del Rey Final Showdown</h3>
+                    <p>Valencia CF and Atlético Madrid are set to clash in the Copa del Rey Final in a thrilling
+                        encounter
+                        for silverware. Both sides have fought hard to reach this stage.</p>
+                    <div class="news-image">
+                        <img src="c:\Users\kopano\Downloads\EGL WEBSITE\copa del rey showdown.png"
+                            alt="Copa del Rey Final Showdown image">
+                    </div>
+                    <div class="news-meta">EGL Staff · 8 Apr 2026 · 4 min read</div>
+                </div>
+                <div class="news-item">
+                    <h3>Sevilla FC Chasing Glory on All Fronts</h3>
+                    <p>Sevilla are having an incredible season, sitting 1st in La Liga and advancing in the Europa
+                        League and
+                        Copa Del Rey. Can anyone stop them?</p>
+                    <div class="news-image">
+                        <img src="c:\Users\kopano\Downloads\EGL WEBSITE\sevilla glory.png"
+                            alt="Sevilla FC Chasing Glory image">
+                    </div>
+                    <div class="news-meta">EGL Staff · 6 Apr 2026 · 2 min read</div>
+                </div>
+            </div>
+            <div class="editors-picks">
+                <div class="editors-title">
+                    <span>★</span> EDITOR'S PICKS
+                </div>
+                <div class="editors-grid">
+                    <div class="editor-card">
+                        <img src="c:\Users\kopano\Downloads\EGL WEBSITE\WOLFSBURG.jpg"
+                            alt="Match Preview: wolfsburg revives">
+                        <div class="editor-overlay"></div>
+                        <div class="editor-content">
+                            <div class="editor-label">EGL-News</div>
+                            <h4>Match Preview: WOLFSBURG REVIVES</h4>
+                            <p>EGLORIA Staff</p>
+                        </div>
+                    </div>
+                    <div class="editor-card">
+                        <img src="c:\Users\kopano\Downloads\EGL WEBSITE\stade.png"
+                            alt="Live Sports News | STADE RENNAIS EDGE A THRILLER">
+                        <div class="editor-overlay"></div>
+                        <div class="editor-content">
+                            <div class="editor-label">EGL-News</div>
+                            <h4>LIVE SPORTS NEWS | STADE RENNAIS EDGE A THRILLER</h4>
+                            <p>EGLORIA Staff</p>
+                        </div>
+                    </div>
+                    <div class="editor-card">
+                        <img src="c:\Users\kopano\Downloads\EGL WEBSITE\0-10.png">
+                        <div class="editor-overlay"></div>
+                        <div class="editor-content">
+                            <div class="editor-label">EGL-News</div>
+                            <h4>EUROPA LEAGUE SHOCKER | HISTORY MADE</h4>
+                            <p>EGLORIA Staff</p>
+                        </div>
+                    </div>
+                    <div class="editor-card">
+                        <img src="c:\Users\kopano\Downloads\EGL WEBSITE\ogc nice 5-2.png"
+                            alt="Leipzig vs Juventus IFA Recap">
+                        <div class="editor-overlay"></div>
+                        <div class="editor-content">
+                            <div class="editor-label">EGL-News</div>
+                            <h4>OGC NICE CRUSH FC NANTES 5 – 2</h4>
+                            <p>EGLORIA Staff</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="featured-section">
+                <b>
+                    <div class="section-title">Featured Highlights</div>
+                </b>
+                <div class="featured-top">
+                    <div class="featured-card">
+                        <img src="c:\Users\kopano\Downloads\EGL WEBSITE\world wonders.png" alt="Featured highlight">
+                        <div class="card-content">
+                            <h3>World Wonders: Sevilla Strengthens After Leverkusen Shock</h3>
+                            <p>Following a dramatic Round of 16 clash against Bayer Leverkusen,
+                                Sevilla FC has wasted no time rebuilding and strengthening their squad. After
+                                Leverkusen’s defeat in the RO16,
+                                two standout players have officially completed their transfers to Sevilla, marking a new
+                                chapter for both the club and the players.</p>
+                            <div class="featured-meta">EGLORIA Staff · 2026/03/07</div>
+                        </div>
+                    </div>
+                    <div class="featured-grid">
+                        <div class="featured-small">
+                            <img src="c:\Users\kopano\Downloads\EGL WEBSITE\TOTdownfaLl.jpg" alt="Match preview">
+                            <div class="card-content">
+                                <h3>THE DOWNFALL</h3>
+                                <p>Tottenham Hotspurs, downfall.</p>
+                                <div class="featured-meta">EGL-News</div>
+                            </div>
+                        </div>
+                        <div class="featured-small">
+                            <img src="c:\Users\kopano\Downloads\EGL WEBSITE\rising starr.png" alt="Live sports news">
+                            <div class="card-content">
+                                <h3>RISINGS STARS</h3>
+                                <p>The more we look at the night sky , the more stars we see. Same with EGL as more
+                                    players
+                                    across all competitions start to show themselves.</p>
+                                <div class="featured-meta">EGL-News</div>
+                            </div>
+                        </div>
+                        <div class="featured-small">
+                            <img src="c:\Users\kopano\Downloads\EGL WEBSITE\SEASON_3.png" alt="exciting news">
+                            <div class="card-content">
+                                <h3>Season 3: World Cup</h3>
+                                <p>Flags will rise, rivalries will ignite and only one nation will etch its name into
+                                    history.</p>
+                                <div class="featured-meta">EGL-News</div>
+                            </div>
+                        </div>
+                        <div class="featured-small">
+                            <img src="c:\Users\kopano\Downloads\EGL WEBSITE\When_Glory_Calls..._Only_Four_Remain.png"
+                                alt="Semi finals">
+                            <div class="card-content">
+                                <h3> Road to Glory: Semi-Finals </h3>
+                                <p>hearts, sweat, destiny.</p>
+                                <div class="featured-meta">EGL-News</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+    </main>
+
+    <footer>
+        &copy; 2026 Elite Global League. All rights reserved.
+    </footer>
+
+    <script>
+        // Dropdown Menu Toggle
+        function toggleDropdown() {
+            const dropdownMenu = document.getElementById('dropdownMenu');
+            dropdownMenu.classList.toggle('show');
+        }
+
+        // Close dropdown when clicking outside
+        window.addEventListener('click', (event) => {
+            const dropdown = document.querySelector('.dropdown');
+            if (!dropdown.contains(event.target)) {
+                const dropdownMenu = document.getElementById('dropdownMenu');
+                dropdownMenu.classList.remove('show');
+            }
+
+            if (!event.target.closest('.profile-dropdown')) {
+                document.querySelectorAll('.profile-dropdown-menu.show').forEach(menu => {
+                    menu.classList.remove('show');
+                });
+            }
+        });
+
+        // Smooth scrolling for navigation
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        function toggleProfileMenu(menu) {
+            menu.classList.toggle('show');
+        }
+
+        function logoutUser() {
+            localStorage.removeItem('eglUser');
+            window.location.reload();
+        }
+
+        function createProfilePill(user) {
+            const container = document.createElement('div');
+            container.className = 'profile-dropdown';
+
+            const menu = document.createElement('div');
+            menu.className = 'profile-dropdown-menu';
+            const tcAmount = user.tc || 75;
+            menu.innerHTML = `
+                <div class="profile-dropdown-header">Account</div>
+                <a href="profile designer.html" class="profile-dropdown-item">Profile & Shop <span class="dropdown-badge">${tcAmount} TC</span></a>
+                <a href="Elite Global League Homepage.html#leagues" class="profile-dropdown-item">My Leagues</a>
+                <a href="#" class="profile-dropdown-item">Bot Dashboard</a>
+                <button type="button" class="profile-dropdown-item logout-button">Logout</button>
+            `;
+
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.className = 'profile-pill';
+            button.title = `Logged in as ${user.username || 'Member'}`;
+            button.innerHTML = `
+                <img src="${user.avatar}" alt="${user.username || 'Profile'} picture" class="nav-avatar">
+                <span class="profile-name">${user.username || 'Member'}</span>
+            `;
+            button.addEventListener('click', (event) => {
+                event.stopPropagation();
+                toggleProfileMenu(menu);
+            });
+
+            menu.querySelector('.logout-button').addEventListener('click', logoutUser);
+            container.appendChild(button);
+            container.appendChild(menu);
+            return container;
+        }
+
+        function loadUserProfileNav() {
+            const navProfile = document.getElementById('navProfile');
+            if (!navProfile) return;
+            const storedUser = localStorage.getItem('eglUser');
+            if (!storedUser) return;
+            try {
+                const user = JSON.parse(storedUser);
+                if (!user || !user.avatar) return;
+                navProfile.innerHTML = '';
+                navProfile.appendChild(createProfilePill(user));
+            } catch (error) {
+                console.warn('Unable to load profile nav', error);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', loadUserProfileNav);
+    </script>
+</body>
+
+</html>

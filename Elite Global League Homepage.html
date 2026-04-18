@@ -1,0 +1,1216 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home | EGLORIA</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;400;600&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0d0d0d 100%);
+            color: #e0e0e0;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        header {
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-img {
+            width: 40px;
+            height: 40px;
+            border-radius: 5px;
+        }
+
+        .logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #ffffff;
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+        }
+
+        /* Dropdown Menu */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-button {
+            background: rgba(255, 255, 255, 0.15);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 0.8rem 1.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .dropdown-button:hover {
+            background: rgba(255, 255, 255, 0.25);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background: rgba(0, 0, 0, 0.95);
+            min-width: 250px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+            padding: 1rem 0;
+            z-index: 1;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+            top: 100%;
+            right: 0;
+            margin-top: 0.5rem;
+        }
+
+        .dropdown-content.show {
+            display: block;
+        }
+
+        .dropdown-category {
+            padding: 0.5rem 1.5rem;
+            color: #ffffff;
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .dropdown-item {
+            padding: 0.75rem 1.5rem;
+            color: #a0a0a0;
+            text-decoration: none;
+            display: block;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .dropdown-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            padding-left: 2rem;
+        }
+
+        .nav-links {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            gap: 1.75rem;
+            align-items: center;
+            margin: 0 1.5rem;
+        }
+
+        .nav-links a {
+            color: #a0a0a0;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: #ffffff;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .login-button {
+            padding: 0.75rem 1.25rem;
+            border-radius: 8px;
+        }
+
+        .profile-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 999px;
+            padding: 0.45rem 0.75rem;
+            color: #ffffff;
+            text-decoration: none;
+        }
+
+        .nav-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+        }
+
+        .profile-name {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .profile-dropdown {
+            position: relative;
+        }
+
+        .profile-dropdown-menu {
+            position: absolute;
+            right: 0;
+            top: calc(100% + 0.8rem);
+            width: 220px;
+            background: rgba(3, 11, 24, 0.98);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 18px;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.35);
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(-8px);
+            pointer-events: none;
+            transition: opacity 0.2s ease, transform 0.2s ease;
+            z-index: 1001;
+        }
+
+        .profile-dropdown-menu.show {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        .profile-dropdown-header {
+            padding: 1rem 1rem 0.5rem;
+            color: #a0a0a0;
+            font-size: 0.75rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        .dropdown-badge {
+            float: right;
+            background: #1b6cff;
+            color: #ffffff;
+            border-radius: 999px;
+            padding: 0.15rem 0.6rem;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .profile-dropdown-item {
+            display: block;
+            width: 100%;
+            padding: 0.95rem 1rem;
+            color: #e7eaf3;
+            font-weight: 600;
+            text-decoration: none;
+            background: transparent;
+            border: none;
+            text-align: left;
+            cursor: pointer;
+        }
+
+        .profile-dropdown-item:hover,
+        .profile-dropdown-item:focus {
+            background: rgba(255, 255, 255, 0.08);
+            outline: none;
+        }
+
+        .profile-dropdown-item.logout-button {
+            color: #ff8282;
+        }
+
+        .cta-button {
+            background: rgba(255, 255, 255, 0.15);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 0.8rem 1.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        .cta-button:hover {
+            background: rgba(255, 255, 255, 0.25);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 8rem 2rem 4rem;
+            text-align: center;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.8) 0%, rgba(26, 26, 26, 0.8) 50%, rgba(13, 13, 13, 0.8) 100%);
+            min-height: 80vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .hero-inner {
+            width: 100%;
+            max-width: 1000px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .hero h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 4rem;
+            font-weight: bold;
+            color: #ffffff;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+        }
+
+        .hero .subtitle {
+            font-size: 1.4rem;
+            color: #c0c0c0;
+            margin-bottom: 2rem;
+            max-width: 600px;
+        }
+
+        .hero-stats {
+            display: flex;
+            gap: 1.5rem;
+            margin: 3rem 0;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .stat {
+            text-align: center;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.575);
+            border-radius: 15px;
+            padding: 1.5rem 2rem;
+            min-width: 190px;
+            box-shadow: 0 0 0 1px rgba(0, 255, 136, 0.08) inset;
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+
+        .stat:hover {
+            transform: translateY(-4px);
+            border-color: rgba(230, 252, 241, 0.6);
+        }
+
+        .stat-number {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.4rem;
+            font-weight: bold;
+            color: #ffffff;
+            display: block;
+        }
+
+        .stat-label {
+            color: #c0c0c0;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-top: 0.75rem;
+        }
+
+        /* Section Styles */
+        section {
+            padding: 5rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem;
+            color: #ffffff;
+            text-align: center;
+            margin-bottom: 3rem;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+        }
+
+        .section-subtitle {
+            font-size: 1.2rem;
+            color: #c0c0c0;
+            text-align: center;
+            margin-bottom: 4rem;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Our Story Section */
+        .story-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .story-text h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8rem;
+            color: #ffffff;
+            margin-bottom: 1.5rem;
+        }
+
+        .story-text p {
+            color: #c0c0c0;
+            margin-bottom: 1.5rem;
+            line-height: 1.8;
+        }
+
+        .story-image {
+            text-align: center;
+        }
+
+        .story-image img {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            border: 3px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+        }
+
+        /* How It Works */
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 3rem;
+        }
+
+        .step {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 2.5rem;
+            border-radius: 10px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .step:hover {
+            background: rgba(0, 0, 0, 0.7);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-5px);
+        }
+
+        .step-number {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3rem;
+            color: rgba(255, 255, 255, 0.3);
+            margin-bottom: 1rem;
+        }
+
+        .step h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.4rem;
+            color: #ffffff;
+            margin-bottom: 1rem;
+        }
+
+        .step p {
+            color: #c0c0c0;
+        }
+
+        /* What We Offer */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 2rem;
+            border-radius: 10px;
+            transition: all 0.3s;
+        }
+
+        .feature:hover {
+            background: rgba(0, 0, 0, 0.7);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .feature h3 {
+            font-family: 'Orbitron', sans-serif;
+            color: #ffffff;
+            margin-bottom: 1rem;
+        }
+
+        .feature p {
+            color: #c0c0c0;
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-link {
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: 600;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.3s;
+        }
+
+        .feature-link:hover {
+            border-bottom-color: #ffffff;
+        }
+
+        /* Community Section */
+        .community-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .community-stat {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 2rem;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .community-stat h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            color: #ffffff;
+            margin-bottom: 0.5rem;
+        }
+
+        .community-stat p {
+            color: #c0c0c0;
+        }
+
+        /* Latest News */
+        .news-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .news-item {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 2rem;
+            border-radius: 10px;
+            transition: all 0.3s;
+        }
+
+        .news-item:hover {
+            background: rgba(0, 0, 0, 0.7);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .news-item h3 {
+            color: #ffffff;
+            margin-bottom: 1rem;
+        }
+
+        .news-item p {
+            color: #c0c0c0;
+            margin-bottom: 1rem;
+        }
+
+        .news-meta {
+            color: #808080;
+            font-size: 0.9rem;
+        }
+
+        /* FAQ Section */
+        .faq {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .faq-item {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 1rem;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .faq-question {
+            padding: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s;
+        }
+
+        .faq-question:hover {
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .faq-question h3 {
+            color: #ffffff;
+            font-size: 1.1rem;
+        }
+
+        .faq-toggle {
+            color: #a0a0a0;
+            font-size: 1.5rem;
+        }
+
+        .faq-answer {
+            padding: 0 1.5rem 1.5rem;
+            color: #c0c0c0;
+            display: none;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            background: rgba(0, 0, 0, 0.8);
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+
+        .cta-section h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem;
+            color: #ffffff;
+            margin-bottom: 1rem;
+        }
+
+        .cta-section p {
+            color: #c0c0c0;
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cta-button-large {
+            background: rgba(255, 255, 255, 0.15);
+            color: #ffffff;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .cta-button-large:hover {
+            background: rgba(255, 255, 255, 0.25);
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: translateY(-2px);
+        }
+
+        /* Footer */
+        footer {
+            background: rgba(0, 0, 0, 0.95);
+            padding: 3rem 2rem 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section h3 {
+            color: #ffffff;
+            font-family: 'Orbitron', sans-serif;
+            margin-bottom: 1rem;
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section a {
+            color: #a0a0a0;
+            text-decoration: none;
+            display: block;
+            margin-bottom: 0.5rem;
+            transition: all 0.3s;
+        }
+
+        .footer-section a:hover {
+            color: #ffffff;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 2rem;
+            color: #808080;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 1rem;
+        }
+
+        .social-links a {
+            color: #a0a0a0;
+            font-size: 1.5rem;
+            transition: all 0.3s;
+        }
+
+        .social-links a:hover {
+            color: #ffffff;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            header {
+                flex-wrap: wrap;
+                justify-content: center;
+                row-gap: 0.85rem;
+            }
+
+            .logo-container {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .nav-links {
+                width: 100%;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 1rem;
+                margin: 0;
+            }
+
+            .nav-actions {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero-stats {
+                gap: 2rem;
+            }
+
+            .story-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .steps,
+            .features,
+            .news-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .community-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            header {
+                padding: 1rem 1rem;
+            }
+
+            .nav-links {
+                gap: 0.85rem;
+            }
+
+            .hero-stats {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .community-stats {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="logo-container">
+            <img src="c:\Users\kopano\Downloads\EGL GLOW.png" alt="EGLORIA Logo" class="logo-img">
+            <div class="logo">EGLORIA</div>
+            <div class="dropdown">
+                <button class="dropdown-button" onclick="toggleDropdown()">☰</button>
+                <div class="dropdown-content" id="dropdownMenu">
+                    <div class="dropdown-category">News & Media</div>
+                    <a href="news.html" class="dropdown-item">News</a>
+                    <a href="community.html" class="dropdown-item">Community Clips</a>
+                    <a href="#wiki" class="dropdown-item">GFX Gallery</a>
+                    <a href="#changelog" class="dropdown-item">Changelog</a>
+
+                    <div class="dropdown-category">Transfers & Teams</div>
+                    <a href="#Teams" class="dropdown-item">Teams</a>
+                    <a href="#Transfers" class="dropdown-item">Transfers</a>
+                    <a href="#Budgets" class="dropdown-item">Budgets</a>
+                    <a href="#Tier-lists" class="dropdown-item">Tier-lists</a>
+
+                    <div class="dropdown-category">Resources (soon)</div>
+                    <a href="#features" class="dropdown-item">Features</a>
+                    <a href="#pricing" class="dropdown-item">Plans & Pricing</a>
+                    <a href="#tackyfy-bot" class="dropdown-item">EGL Assistant Bot</a>
+                    <a href="#wiki-guides" class="dropdown-item">Wiki & Guides</a>
+
+                    <div class="dropdown-category">Support Us</div>
+                    <a href="#advertise" class="dropdown-item">Advertise</a>
+                </div>
+            </div>
+        </div>
+        <nav class="nav-links">
+            <a href="Elite Global League Homepage.html">Home</a>
+            <a href="news.html">News</a>
+            <a href="profile designer.html">Shop</a>
+            <a href="Stats.html">League</a>
+            <a href="live.html">Live</a>
+            <a href="community.html">Community</a>
+        </nav>
+        <div class="nav-actions" id="navProfile">
+            <a href="login.html?redirect=Elite%20Global%20League%20Homepage.html"
+                class="cta-button login-button">Login</a>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="hero-inner">
+            <h1>EGLORIA</h1>
+            <p class="subtitle">Professional Esports League Management Platform. Powering competitive gaming communities
+                worldwide.</p>
+
+            <div class="hero-stats">
+                <div class="stat">
+                    <span class="stat-number">900+</span>
+                    <span class="stat-label">Community Members</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-number">2000+</span>
+                    <span class="stat-label">EGL Members</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-number">4+</span>
+                    <span class="stat-label">Active Leagues</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-number">150+</span>
+                    <span class="stat-label">Matches Tracked</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="story">
+        <b>
+            <div class="section-title">Our Story</div>
+        </b>
+        <div class="story-content">
+            <div class="story-text">
+                <h3>Founded by Jaden</h3>
+                <p>It all started with GCL (Global Champions League) —
+                    a small and developing league built on passion for competition within the Roblox soccer community.
+                    What began as a simple environment for players to compete and improve soon showed potential for
+                    something greater.
+                </p>
+                <p>As the vision expanded, EGL (Elite Global League) was born. With a stronger structure, higher
+                    standards,
+                    and a focus on development, the league quickly began to grow into a more organized and competitive
+                    platform.
+                    What was once a small project started evolving into a serious environment for both new and upcoming
+                    players.</p>
+                <p>Through dedication, consistency, and a commitment to building a strong community,
+                    EGL has now established itself as one of the best beginner leagues in the RFL scene. It has become a
+                    place where players develop their skills,
+                    experience real competition, and prepare for higher levels of play.
+                </p>
+                <h3>Our MISSION</h3>
+                <ul>
+                    <b>
+                        <li>building the most realistic league in RFL/RF </li>
+                    </b>
+                    <b>
+                        <li>providing a competitive environment for players to develop and improve</li>
+                    </b>
+                    <b>
+                        <li>creating a strong and active community of players, fans, and content creators</li>
+                    </b>
+                </ul>
+            </div>
+            <div class="story-image">
+                <img src="c:\Users\kopano\Downloads\EGL GLOW.png" alt="Elite Global League Logo">
+            </div>
+        </div>
+    </section>
+
+    <section id="how-it-works">
+        <b>
+            <div class="section-title">How It Works</div>
+        </b>
+        <div class="section-subtitle">Join the elite ranks of competitive gaming in three simple steps</div>
+
+        <div class="steps">
+            <div class="step">
+                <div class="step-number">01</div>
+                <h3>Find Your League</h3>
+                <p>Browse leagues, tierlists, and standings across multiple competitive sports and esports games.</p>
+            </div>
+            <div class="step">
+                <div class="step-number">02</div>
+                <h3>Join & Compete</h3>
+                <p>Sign up, get rated by our advanced tier system, join a team, and compete in organized league matches.
+                </p>
+            </div>
+            <div class="step">
+                <div class="step-number">03</div>
+                <h3>Watch & Engage</h3>
+                <p>Stream live matches, chat with the community, earn rewards, and climb the leaderboards.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="features">
+        <b>
+            <div class="section-title">What We Offer</div>
+        </b>
+
+        <div class="features">
+            <div class="feature">
+                <h3>Player Tierlists</h3>
+                <p>Browse detailed player ratings, stats, and tier rankings across multiple leagues. Compare players and
+                    discover rising talent.</p>
+                <a href="Stats.html" class="feature-link">Browse Leagues →</a>
+            </div>
+            <div class="feature">
+                <h3>Live Match Streaming</h3>
+                <p>Watch live competitive matches with interactive chat, earn rewards, climb leaderboards, and vote in
+                    polls.</p>
+                <a href="live.html" class="feature-link">Watch Live →</a>
+            </div>
+            <div class="feature">
+                <h3>Fixtures & Standings</h3>
+                <p>Track match schedules, results, and live league tables. Never miss a matchday with calendar views and
+                    real-time updates.</p>
+                <a href="Stats.html" class="feature-link">Browse Leagues →</a>
+            </div>
+            <div class="feature">
+                <h3>Transfer Market</h3>
+                <p>Explore available players, view their stats and ratings, and manage your team's roster. </p>
+                <a href="Stats.html" class="feature-link">Browse Transfers →</a>
+            </div>
+            <div class="feature">
+                <h3>News & Articles</h3>
+                <p>Stay up to date with match reports, transfer news, analysis, interviews, and community stories.</p>
+                <a href="news.html" class="feature-link">Read News →</a>
+            </div>
+            <div class="feature">
+                <h3>Rulebooks & Guides</h3>
+                <p>Access official league rulebooks, referee guides, and competition breakdowns. Everything your league
+                    needs to run smoothly.</p>
+                <a href="Stats.html" class="feature-link">View Rules →</a>
+            </div>
+        </div>
+    </section>
+
+    <section id="community">
+        <b>
+            <div class="section-title">Community</div>
+        </b>
+
+        <div class="community-stats">
+            <div class="community-stat">
+                <h3>2000+</h3>
+                <p>EGL Members ready to compete</p>
+            </div>
+            <div class="community-stat">
+                <h3>Multi-Game</h3>
+                <p>From Roblox to EA FC we cover it all.</p>
+            </div>
+            <div class="community-stat">
+                <h3>Active GFX</h3>
+                <p>active media team</p>
+            </div>
+            <div class="community-stat">
+                <h3>24/7</h3>
+                <p>Live Events that would keep you engaged!</p>
+            </div>
+        </div>
+
+        <p style="text-align: center; color: #c0c0c0; max-width: 800px; margin: 0 auto;">
+            The best of the best leagues out there for RFL players to compete in.
+            We have a strong and active community of players, fans, and content creators who are passionate about
+            competitive gaming.
+            Join us and be part of the action!
+        </p>
+    </section>
+
+    <section id="news-preview">
+        <b>
+            <div class="section-title">Latest News</div>
+        </b>
+        <p style="text-align:center; color:#c0c0c0; max-width:760px; margin:0 auto 2rem;">
+            We’ve created a dedicated news page for stories, match reports, and esports updates. Click below to view
+            everything in one place.
+        </p>
+        <div style="text-align:center; margin-bottom:4rem;">
+            <a href="news.html" class="cta-button-large">Go to News Page</a>
+        </div>
+    </section>
+
+    <section id="faq">
+        <div class="section-title">Frequently Asked Questions</div>
+
+        <div class="faq">
+            <div class="faq-item">
+                <div class="faq-question">
+                    <h3>What is Elite Global League?</h3>
+                    <span class="faq-toggle">+</span>
+                </div>
+                <div class="faq-answer">
+                    <p>Elite Global League is a professional esports league management platform built for competitive
+                        gaming communities. We provide cutting-edge tools for running esports leagues including player
+                        tierlists, fixtures, standings, live match streaming, scoreboards, and more.</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <h3>What games does EGL support?</h3>
+                    <span class="faq-toggle">+</span>
+                </div>
+                <div class="faq-answer">
+                    <p>EGL currently supports leagues for multiple competitive sports and esports titles including
+                        soccer simulations, battle royales, and strategy games. Our platform is game-agnostic — any
+                        competitive community can set up and run their league on EGL.</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <h3>How do I join the league?</h3>
+                    <span class="faq-toggle">+</span>
+                </div>
+                <div class="faq-answer">
+                    <p>Browse available leagues on our platform, then join our Discord community to sign up for the
+                        next season. Once registered, you'll be rated by the tier system and can join a team to start
+                        competing in organized matches.</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <h3>Is Elite Global League free?</h3>
+                    <span class="faq-toggle">+</span>
+                </div>
+                <div class="faq-answer">
+                    <p>Browsing tierlists, fixtures, standings, news, and watching live matches is completely free.
+                        League owners can access basic tools for free, and premium plans are available for advanced
+                        features like custom scoreboards, additional league slots, and priority support.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta-section">
+        <h2>Come Join US</h2>
+        <a href="https://discord.gg/pHE3hzh6HW" class="cta-button-large" style="margin-bottom: 1.5rem;">Join Our
+            Discord</a>
+        <p>Come join us and experience the future of RFL/RF league management.</p>
+    </section>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>PLATFORM</h3>
+                <ul>
+                    <li><a href="#leagues">Leagues</a></li>
+                    <li><a href="news.html">News</a></li>
+                    <li><a href="#gfx">GFX Gallery</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>RESOURCES</h3>
+                <ul>
+                    <li><a href="#wiki">Wiki & Guides</a></li>
+                    <li><a href="#features">Features</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>COMPANY</h3>
+                <ul>
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#partners">Partners</a></li>
+                    <li><a href="#contact">Contact Us</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>LEGAL</h3>
+                <ul>
+                    <li><a href="#privacy">Privacy Policy</a></li>
+                    <li><a href="#terms">Terms of Service</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <div class="social-links">
+                <a href="#discord">Discord</a>
+                <a href="#twitter">Twitter</a>
+                <a href="#youtube">YouTube</a>
+            </div>
+            <p>&copy; 2026 Elite Global League. All rights reserved.<br>Made with passion for esports</p>
+        </div>
+    </footer>
+
+    <script>
+        // Dropdown Menu Toggle
+        function toggleDropdown() {
+            const dropdownMenu = document.getElementById('dropdownMenu');
+            dropdownMenu.classList.toggle('show');
+        }
+
+        // Close dropdown when clicking outside
+        window.addEventListener('click', (event) => {
+            const dropdown = document.querySelector('.dropdown');
+            if (!dropdown.contains(event.target)) {
+                const dropdownMenu = document.getElementById('dropdownMenu');
+                dropdownMenu.classList.remove('show');
+            }
+
+            if (!event.target.closest('.profile-dropdown')) {
+                document.querySelectorAll('.profile-dropdown-menu.show').forEach(menu => {
+                    menu.classList.remove('show');
+                });
+            }
+        });
+
+        // FAQ Toggle Functionality
+        document.querySelectorAll('.faq-question').forEach(question => {
+            question.addEventListener('click', () => {
+                const answer = question.nextElementSibling;
+                const toggle = question.querySelector('.faq-toggle');
+
+                if (answer.style.display === 'block') {
+                    answer.style.display = 'none';
+                    toggle.textContent = '+';
+                } else {
+                    answer.style.display = 'block';
+                    toggle.textContent = '−';
+                }
+            });
+        });
+
+        // Smooth scrolling for navigation
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        function toggleProfileMenu(menu) {
+            menu.classList.toggle('show');
+        }
+
+        function logoutUser() {
+            localStorage.removeItem('eglUser');
+            window.location.reload();
+        }
+
+        function createProfilePill(user) {
+            const container = document.createElement('div');
+            container.className = 'profile-dropdown';
+
+            const menu = document.createElement('div');
+            menu.className = 'profile-dropdown-menu';
+            const tcAmount = user.tc || 75;
+            menu.innerHTML = `
+                <div class="profile-dropdown-header">Account</div>
+                <a href="profile designer.html" class="profile-dropdown-item">Profile & Shop <span class="dropdown-badge">${tcAmount} TC</span></a>
+                <a href="Elite Global League Homepage.html#leagues" class="profile-dropdown-item">My Leagues</a>
+                <a href="#" class="profile-dropdown-item">Bot Dashboard</a>
+                <button type="button" class="profile-dropdown-item logout-button">Logout</button>
+            `;
+
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.className = 'profile-pill';
+            button.title = `Logged in as ${user.username || 'Member'}`;
+            button.innerHTML = `
+                <img src="${user.avatar}" alt="${user.username || 'Profile'} picture" class="nav-avatar">
+                <span class="profile-name">${user.username || 'Member'}</span>
+            `;
+            button.addEventListener('click', (event) => {
+                event.stopPropagation();
+                toggleProfileMenu(menu);
+            });
+
+            menu.querySelector('.logout-button').addEventListener('click', logoutUser);
+            container.appendChild(button);
+            container.appendChild(menu);
+            return container;
+        }
+
+        function loadUserProfileNav() {
+            const navProfile = document.getElementById('navProfile');
+            if (!navProfile) return;
+            const storedUser = localStorage.getItem('eglUser');
+            if (!storedUser) return;
+            try {
+                const user = JSON.parse(storedUser);
+                if (!user || !user.avatar) return;
+                navProfile.innerHTML = '';
+                navProfile.appendChild(createProfilePill(user));
+            } catch (error) {
+                console.warn('Unable to load profile nav', error);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', loadUserProfileNav);
+    </script>
+</body>
+
+</html>
+</content>
+<parameter name="filePath">c:\Users\kopano\Downloads\Elite Global League Homepage.html

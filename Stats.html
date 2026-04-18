@@ -1,0 +1,2890 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EGL League | EGLORIA</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;400;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background: #080808;
+            color: #e0e0e0;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* ── HEADER ── */
+        header {
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-img {
+            width: 40px;
+            height: 40px;
+            border-radius: 5px;
+        }
+
+        .logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #fff;
+        }
+
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-button {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 0.6rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .dropdown-button:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background: rgba(5, 5, 5, 0.98);
+            min-width: 250px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+            padding: 0.75rem 0;
+            z-index: 1;
+            border: 0.5px solid rgba(255, 255, 255, 0.12);
+            border-radius: 10px;
+            top: 100%;
+            right: 0;
+            margin-top: 0.5rem;
+        }
+
+        .dropdown-content.show {
+            display: block;
+        }
+
+        .dropdown-category {
+            padding: 0.5rem 1.5rem;
+            color: #555;
+            font-weight: 600;
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            border-bottom: 0.5px solid rgba(255, 255, 255, 0.06);
+            margin-bottom: 0.25rem;
+        }
+
+        .dropdown-item {
+            padding: 0.65rem 1.5rem;
+            color: #888;
+            text-decoration: none;
+            display: block;
+            transition: all 0.2s;
+            cursor: pointer;
+            font-size: 0.95rem;
+        }
+
+        .dropdown-item:hover {
+            background: rgba(255, 255, 255, 0.07);
+            color: #fff;
+            padding-left: 1.75rem;
+        }
+
+        .nav-links {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            gap: 1.75rem;
+            align-items: center;
+            margin: 0 1.5rem;
+        }
+
+        .nav-links a {
+            color: #666;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s;
+            font-size: 0.95rem;
+        }
+
+        .nav-links a:hover {
+            color: #fff;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .cta-button {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 0.65rem 1.25rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.95rem;
+            transition: all 0.3s;
+        }
+
+        .cta-button:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .profile-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: 999px;
+            padding: 0.4rem 0.75rem;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        .nav-avatar {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .profile-name {
+            font-size: 0.9rem;
+            font-weight: 700;
+        }
+
+        .profile-dropdown {
+            position: relative;
+        }
+
+        .profile-dropdown-menu {
+            position: absolute;
+            right: 0;
+            top: calc(100% + 0.8rem);
+            width: 220px;
+            background: rgba(5, 5, 5, 0.98);
+            border: 0.5px solid rgba(255, 255, 255, 0.1);
+            border-radius: 14px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            transform: translateY(-6px);
+            pointer-events: none;
+            transition: opacity 0.2s, transform 0.2s;
+            z-index: 1001;
+        }
+
+        .profile-dropdown-menu.show {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        .profile-dropdown-header {
+            padding: 0.85rem 1rem 0.4rem;
+            color: #555;
+            font-size: 0.72rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        .dropdown-badge {
+            float: right;
+            background: #1b6cff;
+            color: #fff;
+            border-radius: 999px;
+            padding: 0.1rem 0.5rem;
+            font-size: 0.72rem;
+            font-weight: 700;
+        }
+
+        .profile-dropdown-item {
+            display: block;
+            width: 100%;
+            padding: 0.85rem 1rem;
+            color: #ccc;
+            font-weight: 600;
+            text-decoration: none;
+            background: transparent;
+            border: none;
+            text-align: left;
+            cursor: pointer;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.95rem;
+        }
+
+        .profile-dropdown-item:hover {
+            background: rgba(255, 255, 255, 0.07);
+            color: #fff;
+        }
+
+        .profile-dropdown-item.logout-button {
+            color: #ff7070;
+        }
+
+        /* ── PAGE ── */
+        .page-wrapper {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 6rem 2rem 3rem;
+        }
+
+        /* ── LEAGUE HEADER CARD ── */
+        .league-header {
+            background: #0c0c0c;
+            border: 0.5px solid #1e1e1e;
+            border-radius: 14px;
+            padding: 1.5rem 2rem 0;
+            margin-bottom: 1.25rem;
+            overflow: hidden;
+        }
+
+        .league-header-top {
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .league-logo {
+            width: 66px;
+            height: 66px;
+            background: #141414;
+            border: 0.5px solid #2a2a2a;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 16px;
+            font-weight: 700;
+            color: #fff;
+            flex-shrink: 0;
+        }
+
+        .league-header-text {
+            flex: 1;
+        }
+
+        .league-platform-tag {
+            font-size: 10px;
+            color: #444;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .league-header-text h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #fff;
+            line-height: 1.15;
+            margin-bottom: 4px;
+        }
+
+        .league-header-text p {
+            font-size: 13px;
+            color: #555;
+        }
+
+        .league-header-actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .btn-icon {
+            width: 34px;
+            height: 34px;
+            background: #161616;
+            border: 0.5px solid #2a2a2a;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .btn-icon svg {
+            width: 14px;
+            height: 14px;
+            stroke: #555;
+            fill: none;
+            stroke-width: 1.5;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .btn-enter {
+            background: #fff;
+            color: #000;
+            border: none;
+            padding: 0 16px;
+            height: 34px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: 'Rajdhani', sans-serif;
+            transition: opacity 0.15s;
+        }
+
+        .btn-enter:hover {
+            opacity: 0.85;
+        }
+
+        .league-nav {
+            display: flex;
+            border-top: 0.5px solid #1a1a1a;
+            margin: 0 -2rem;
+            padding: 0 2rem;
+        }
+
+        .league-nav-tab {
+            padding: 12px 16px;
+            font-size: 13px;
+            color: #444;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 600;
+            letter-spacing: 0.03em;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -0.5px;
+            transition: color 0.15s;
+        }
+
+        .league-nav-tab:hover {
+            color: #888;
+        }
+
+        .league-nav-tab.active {
+            color: #fff;
+            border-bottom: 2px solid #fff;
+        }
+
+        /* ── TAB PANELS ── */
+        .tab-panel {
+            display: none;
+        }
+
+        .tab-panel.active {
+            display: block;
+        }
+
+        /* ── OVERVIEW ── */
+        .league-intro {
+            background: #0c0c0c;
+            border: 0.5px solid #1e1e1e;
+            border-left: 2px solid #252525;
+            border-radius: 14px;
+            padding: 1.75rem 2rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .league-intro p {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.8;
+            margin-bottom: 0.5rem;
+        }
+
+        .league-intro p:first-child {
+            color: #ccc;
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        .league-intro p:last-child {
+            color: #fff;
+            font-weight: 700;
+            margin-bottom: 0;
+        }
+
+        .league-stats {
+            background: #0c0c0c;
+            border: 0.5px solid #1e1e1e;
+            border-radius: 14px;
+            padding: 1.75rem 2rem;
+            margin-bottom: 1.25rem;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            text-align: center;
+        }
+
+        .stat-item {
+            border-right: 0.5px solid #1a1a1a;
+        }
+
+        .stat-item:last-child {
+            border-right: none;
+        }
+
+        .stat-num {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: #fff;
+            letter-spacing: -0.02em;
+            line-height: 1;
+            margin-bottom: 7px;
+        }
+
+        .stat-lbl {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.14em;
+            color: #444;
+        }
+
+        .league-matchbar {
+            background: #0c0c0c;
+            border: 0.5px solid #1e1e1e;
+            border-radius: 14px;
+            padding: 1rem 2rem;
+            margin-bottom: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            justify-content: center;
+        }
+
+        .mbar-item {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            font-size: 13px;
+            color: #555;
+            font-weight: 600;
+        }
+
+        .mbar-item svg {
+            width: 14px;
+            height: 14px;
+            stroke: #444;
+            fill: none;
+            stroke-width: 1.5;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .mbar-dot {
+            width: 3px;
+            height: 3px;
+            background: #222;
+            border-radius: 50%;
+        }
+
+        .section-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.16em;
+            color: #333;
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+        }
+
+        .highlights-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+        }
+
+        .highlight-card {
+            background: #0c0c0c;
+            border: 0.5px solid #1a1a1a;
+            border-radius: 14px;
+            padding: 1rem;
+            transition: border-color 0.2s;
+        }
+
+        .highlight-card:hover {
+            border-color: #333;
+        }
+
+        .hc-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.75rem;
+        }
+
+        .hc-icon svg {
+            width: 15px;
+            height: 15px;
+            stroke: #444;
+            fill: none;
+            stroke-width: 1.5;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .hc-badge {
+            width: 26px;
+            height: 26px;
+            border-radius: 6px;
+            background: #161616;
+            border: 0.5px solid #222;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 700;
+            color: #555;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .hc-type {
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: #333;
+            margin-bottom: 4px;
+            font-weight: 600;
+        }
+
+        .hc-main {
+            font-size: 13px;
+            font-weight: 600;
+            color: #ddd;
+            line-height: 1.3;
+            margin-bottom: 3px;
+        }
+
+        .hc-sub {
+            font-size: 11px;
+            color: #444;
+        }
+
+        .teams-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 2rem 0 0.75rem;
+        }
+
+        .teams-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .teams-title::before {
+            content: '';
+            display: block;
+            width: 3px;
+            height: 20px;
+            background: #fff;
+            border-radius: 2px;
+        }
+
+        .teams-viewall {
+            font-size: 13px;
+            color: #555;
+            text-decoration: none;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            transition: color 0.2s;
+            cursor: pointer;
+        }
+
+        .teams-viewall:hover {
+            color: #ccc;
+        }
+
+        .teams-viewall::after {
+            content: '›';
+            font-size: 16px;
+        }
+
+        .teams-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+        }
+
+        .team-card {
+            background: #0c0c0c;
+            border: 0.5px solid #1a1a1a;
+            border-radius: 10px;
+            padding: 0.75rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: border-color 0.2s, background 0.2s;
+        }
+
+        .team-card:hover {
+            border-color: #2e2e2e;
+            background: #101010;
+        }
+
+        .team-badge {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            background: #161616;
+            border: 0.5px solid #222;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .team-badge-letter {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 11px;
+            font-weight: 700;
+            color: #555;
+        }
+
+        .team-info {
+            min-width: 0;
+        }
+
+        .team-name {
+            font-size: 12px;
+            font-weight: 600;
+            color: #ccc;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            line-height: 1.2;
+            margin-bottom: 2px;
+        }
+
+        .team-players {
+            font-size: 10px;
+            color: #444;
+        }
+
+        /* ── SCORES & STANDINGS ── */
+        .view-toggle {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 1.25rem;
+        }
+
+        .toggle-btn {
+            padding: 8px 20px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            border: 0.5px solid #1e1e1e;
+            background: #0c0c0c;
+            color: #555;
+            font-family: 'Rajdhani', sans-serif;
+            transition: all 0.15s;
+        }
+
+        .toggle-btn:hover {
+            color: #aaa;
+            border-color: #2a2a2a;
+        }
+
+        .toggle-btn.active {
+            background: #fff;
+            color: #000;
+            border-color: #fff;
+        }
+
+        .league-select-wrap {
+            position: relative;
+        }
+
+        .league-select-wrap select {
+            appearance: none;
+            background: #0c0c0c;
+            border: 0.5px solid #1e1e1e;
+            color: #ccc;
+            padding: 8px 32px 8px 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            font-family: 'Rajdhani', sans-serif;
+            cursor: pointer;
+            outline: none;
+        }
+
+        .league-select-wrap::after {
+            content: '▾';
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #555;
+            pointer-events: none;
+            font-size: 12px;
+        }
+
+        .league-selector-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 1.25rem;
+        }
+
+        .league-tag {
+            background: #0c0c0c;
+            border: 0.5px solid #1e1e1e;
+            color: #666;
+            padding: 7px 14px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+        }
+
+        .standings-table {
+            background: #0c0c0c;
+            border: 0.5px solid #1e1e1e;
+            border-radius: 14px;
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+        }
+
+        .table-head {
+            display: grid;
+            grid-template-columns: 40px 1fr 120px 40px 40px 40px 50px 50px 55px 50px;
+            padding: 10px 16px;
+            border-bottom: 0.5px solid #1a1a1a;
+            gap: 4px;
+        }
+
+        .th {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: #333;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        .th:nth-child(2) {
+            text-align: left;
+        }
+
+        .table-row {
+            display: grid;
+            grid-template-columns: 40px 1fr 120px 40px 40px 40px 50px 50px 55px 50px;
+            padding: 11px 16px;
+            border-bottom: 0.5px solid #111;
+            align-items: center;
+            gap: 4px;
+            transition: background 0.15s;
+            cursor: pointer;
+        }
+
+        .table-row:last-child {
+            border-bottom: none;
+        }
+
+        .table-row:hover {
+            background: #101010;
+        }
+
+        .td {
+            font-size: 13px;
+            color: #666;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .td-rank {
+            font-size: 12px;
+            color: #444;
+            font-weight: 700;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+
+        .td-team {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            text-align: left;
+        }
+
+        .td-team-badge {
+            width: 24px;
+            height: 24px;
+            background: #161616;
+            border: 0.5px solid #222;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 9px;
+            font-weight: 700;
+            color: #555;
+            font-family: 'Orbitron', sans-serif;
+            flex-shrink: 0;
+        }
+
+        .td-team-name {
+            font-size: 13px;
+            color: #ccc;
+            font-weight: 600;
+        }
+
+        .form-dots {
+            display: flex;
+            gap: 3px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .dot-w {
+            background: #4ade80;
+        }
+
+        .dot-d {
+            background: #facc15;
+        }
+
+        .dot-l {
+            background: #f87171;
+        }
+
+        .gd-pos {
+            color: #4ade80;
+        }
+
+        .gd-neg {
+            color: #f87171;
+        }
+
+        .gd-neu {
+            color: #666;
+        }
+
+        .td-pts {
+            font-size: 13px;
+            font-weight: 700;
+            color: #fff;
+            text-align: center;
+        }
+
+        .rank-strip {
+            width: 3px;
+            height: 14px;
+            border-radius: 2px;
+            display: inline-block;
+        }
+
+        .rank-top {
+            background: #4ade80;
+        }
+
+        .rank-mid {
+            background: transparent;
+        }
+
+        .rank-bot {
+            background: #f87171;
+        }
+
+        .fixtures-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .fixture-day-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.14em;
+            color: #333;
+            font-weight: 700;
+            margin: 0.5rem 0 0.4rem;
+        }
+
+        .fixture-card {
+            background: #0c0c0c;
+            border: 0.5px solid #1a1a1a;
+            border-radius: 12px;
+            padding: 14px 20px;
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            align-items: center;
+            gap: 16px;
+            transition: border-color 0.2s;
+            cursor: pointer;
+        }
+
+        .fixture-card:hover {
+            border-color: #2a2a2a;
+        }
+
+        .fx-team {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .fx-team.right {
+            flex-direction: row-reverse;
+        }
+
+        .fx-badge {
+            width: 30px;
+            height: 30px;
+            background: #141414;
+            border: 0.5px solid #222;
+            border-radius: 7px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 10px;
+            font-weight: 700;
+            color: #555;
+            flex-shrink: 0;
+        }
+
+        .fx-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #ccc;
+        }
+
+        .fx-team.right .fx-name {
+            text-align: right;
+        }
+
+        .fx-score-box {
+            text-align: center;
+        }
+
+        .fx-score {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #fff;
+            letter-spacing: 0.06em;
+        }
+
+        .fx-status {
+            font-size: 10px;
+            color: #444;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-top: 2px;
+        }
+
+        .fx-status.live {
+            color: #4ade80;
+        }
+
+        /* ── TIERLIST ── */
+        .tier-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .tier-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 10px 16px;
+            border-radius: 10px 10px 0 0;
+            margin-bottom: 2px;
+        }
+
+        .tier-diamond {
+            background: linear-gradient(135deg, #0a0a0a, #1a1a2e);
+            border: 0.5px solid #5b8dee;
+        }
+
+        .tier-platinum {
+            background: linear-gradient(135deg, #0a0a0a, #1a1a1a);
+            border: 0.5px solid #8ca0b3;
+        }
+
+        .tier-gold {
+            background: linear-gradient(135deg, #0a0a0a, #1a1200);
+            border: 0.5px solid #7a6020;
+        }
+
+        .tier-bronze {
+            background: linear-gradient(135deg, #0a0a0a, #1a0d00);
+            border: 0.5px solid #5a3a1a;
+        }
+
+        .tier-gem {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            flex-shrink: 0;
+            font-size: 20px;
+        }
+
+        .tier-gem-diamond {
+            background: rgba(91, 141, 238, 0.15);
+        }
+
+        .tier-gem-platinum {
+            background: rgba(140, 160, 179, 0.15);
+        }
+
+        .tier-gem-gold {
+            background: rgba(200, 160, 40, 0.15);
+        }
+
+        .tier-gem-bronze {
+            background: rgba(140, 90, 40, 0.15);
+        }
+
+        .tier-label-wrap {
+            flex: 1;
+        }
+
+        .tier-name {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+        }
+
+        .tier-name-diamond {
+            color: #5b8dee;
+        }
+
+        .tier-name-platinum {
+            color: #8ca0b3;
+        }
+
+        .tier-name-gold {
+            color: #c8a028;
+        }
+
+        .tier-name-bronze {
+            color: #8c5a28;
+        }
+
+        .tier-range {
+            font-size: 11px;
+            color: #555;
+            margin-top: 1px;
+        }
+
+        .tier-count {
+            font-size: 11px;
+            color: #444;
+            font-weight: 600;
+        }
+
+        .tier-players-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+            padding: 12px;
+            border-radius: 0 0 10px 10px;
+            border-top: none;
+        }
+
+        .tier-grid-diamond {
+            background: #0a0a12;
+            border: 0.5px solid #5b8dee;
+            border-top: none;
+        }
+
+        .tier-grid-platinum {
+            background: #0a0a0c;
+            border: 0.5px solid #8ca0b3;
+            border-top: none;
+        }
+
+        .tier-grid-gold {
+            background: #0c0a00;
+            border: 0.5px solid #7a6020;
+            border-top: none;
+        }
+
+        .tier-grid-bronze {
+            background: #0c0800;
+            border: 0.5px solid #5a3a1a;
+            border-top: none;
+        }
+
+        .player-card {
+            background: #0d0d0d;
+            border-radius: 10px;
+            padding: 12px 10px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+            border: 0.5px solid #1a1a1a;
+        }
+
+        .player-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .player-card-diamond:hover {
+            box-shadow: 0 6px 20px rgba(91, 141, 238, 0.2);
+            border-color: #5b8dee;
+        }
+
+        .player-card-platinum:hover {
+            box-shadow: 0 6px 20px rgba(140, 160, 179, 0.15);
+            border-color: #8ca0b3;
+        }
+
+        .player-card-gold:hover {
+            box-shadow: 0 6px 20px rgba(200, 160, 40, 0.15);
+            border-color: #c8a028;
+        }
+
+        .player-card-bronze:hover {
+            box-shadow: 0 6px 20px rgba(140, 90, 40, 0.1);
+            border-color: #8c5a28;
+        }
+
+        .player-rating {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 700;
+            line-height: 1;
+            margin-bottom: 2px;
+        }
+
+        .rating-diamond {
+            color: #5b8dee;
+        }
+
+        .rating-platinum {
+            color: #8ca0b3;
+        }
+
+        .rating-gold {
+            color: #c8a028;
+        }
+
+        .rating-bronze {
+            color: #7a5030;
+        }
+
+        .player-pos {
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: #555;
+            margin-bottom: 6px;
+            font-weight: 700;
+        }
+
+        .player-avatar {
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            margin: 0 auto 7px;
+            background: #1a1a1a;
+            border: 2px solid #222;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            color: #444;
+        }
+
+        .player-name {
+            font-size: 12px;
+            font-weight: 700;
+            color: #ccc;
+            margin-bottom: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .player-team {
+            font-size: 10px;
+            color: #555;
+        }
+
+        /* ── TRANSFERS ── */
+        .sub-toggle {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 1.25rem;
+        }
+
+        .sub-btn {
+            padding: 8px 20px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            border: 0.5px solid #1e1e1e;
+            background: #0c0c0c;
+            color: #555;
+            font-family: 'Rajdhani', sans-serif;
+            transition: all 0.15s;
+        }
+
+        .sub-btn:hover {
+            color: #aaa;
+            border-color: #2a2a2a;
+        }
+
+        .sub-btn.active {
+            background: #fff;
+            color: #000;
+            border-color: #fff;
+        }
+
+        .empty-state {
+            background: #0c0c0c;
+            border: 0.5px solid #1a1a1a;
+            border-radius: 14px;
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+
+        .empty-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            opacity: 0.3;
+        }
+
+        .empty-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            color: #555;
+            margin-bottom: 0.5rem;
+        }
+
+        .empty-sub {
+            font-size: 13px;
+            color: #333;
+        }
+
+        /* ── RULEBOOK ── */
+        .rulebook-layout {
+            display: grid;
+            grid-template-columns: 220px 1fr;
+            gap: 16px;
+            align-items: start;
+        }
+
+        .rulebook-sidebar {
+            background: #0c0c0c;
+            border: 0.5px solid #1a1a1a;
+            border-radius: 14px;
+            padding: 1.25rem;
+            position: sticky;
+            top: 6rem;
+            max-height: calc(100vh - 8rem);
+            overflow-y: auto;
+        }
+
+        .rulebook-sidebar::-webkit-scrollbar {
+            width: 3px;
+        }
+
+        .rulebook-sidebar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .rulebook-sidebar::-webkit-scrollbar-thumb {
+            background: #222;
+            border-radius: 2px;
+        }
+
+        .rb-sidebar-title {
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 0.14em;
+            color: #333;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 0.5px solid #1a1a1a;
+        }
+
+        .rb-section-group {
+            margin-bottom: 1rem;
+        }
+
+        .rb-section-heading {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: #444;
+            font-weight: 700;
+            margin-bottom: 0.4rem;
+            padding: 4px 8px;
+        }
+
+        .rb-nav-item {
+            display: block;
+            padding: 6px 8px;
+            font-size: 12px;
+            color: #555;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.15s;
+            border: none;
+            background: transparent;
+            text-align: left;
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 600;
+            width: 100%;
+        }
+
+        .rb-nav-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: #aaa;
+        }
+
+        .rb-nav-item.active {
+            background: rgba(255, 255, 255, 0.08);
+            color: #fff;
+            border-left: 2px solid #fff;
+            padding-left: 10px;
+        }
+
+        .rulebook-content {
+            min-height: 400px;
+        }
+
+        .rb-header-card {
+            background: #0c0c0c;
+            border: 0.5px solid #1a1a1a;
+            border-radius: 14px;
+            padding: 1.75rem 2rem;
+            margin-bottom: 1.25rem;
+            border-left: 3px solid #fff;
+        }
+
+        .rb-header-top {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 0.75rem;
+        }
+
+        .rb-official-badge {
+            background: rgba(255, 255, 255, 0.08);
+            border: 0.5px solid rgba(255, 255, 255, 0.15);
+            color: #ccc;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 999px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .rb-version {
+            font-size: 11px;
+            color: #444;
+        }
+
+        .rb-updated {
+            font-size: 11px;
+            color: #333;
+        }
+
+        .rb-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 0.5rem;
+        }
+
+        .rb-subtitle {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.7;
+        }
+
+        .rb-subtitle strong {
+            color: #aaa;
+        }
+
+        .rb-section {
+            margin-bottom: 1rem;
+        }
+
+        .rb-section-title-bar {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 13px;
+            font-weight: 700;
+            color: #fff;
+            padding: 12px 0;
+            border-bottom: 0.5px solid #1a1a1a;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+
+        .rb-section-title-bar::before {
+            content: '';
+            display: block;
+            width: 3px;
+            height: 16px;
+            background: #fff;
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+
+        .rb-rule-card {
+            background: #0c0c0c;
+            border: 0.5px solid #1a1a1a;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            overflow: hidden;
+            transition: border-color 0.2s;
+        }
+
+        .rb-rule-card:hover {
+            border-color: #2a2a2a;
+        }
+
+        .rb-rule-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 16px;
+            cursor: pointer;
+        }
+
+        .rb-rule-num {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 10px;
+            font-weight: 700;
+            color: #333;
+            min-width: 30px;
+        }
+
+        .rb-rule-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #ccc;
+            flex: 1;
+        }
+
+        .rb-rule-chevron {
+            color: #333;
+            font-size: 12px;
+            transition: transform 0.2s;
+        }
+
+        .rb-rule-card.open .rb-rule-chevron {
+            transform: rotate(180deg);
+            color: #fff;
+        }
+
+        .rb-rule-card.open .rb-rule-title {
+            color: #fff;
+        }
+
+        .rb-rule-body {
+            display: none;
+            padding: 0 16px 16px;
+            border-top: 0.5px solid #141414;
+        }
+
+        .rb-rule-card.open .rb-rule-body {
+            display: block;
+        }
+
+        .rb-rule-text {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.8;
+            margin-bottom: 0.75rem;
+            padding-top: 12px;
+        }
+
+        .rb-rule-text+.rb-rule-text {
+            padding-top: 0;
+        }
+
+        .rb-penalty-box {
+            background: #111;
+            border-left: 2px solid #333;
+            border-radius: 0 8px 8px 0;
+            padding: 10px 14px;
+            margin-top: 10px;
+        }
+
+        .rb-penalty-line {
+            font-size: 12px;
+            color: #555;
+            margin-bottom: 4px;
+        }
+
+        .rb-penalty-line:last-child {
+            margin-bottom: 0;
+        }
+
+        .rb-penalty-line strong {
+            color: #888;
+        }
+
+        .rb-penalty-line.warn strong {
+            color: #f87171;
+        }
+
+        .rb-penalty-line.ok strong {
+            color: #4ade80;
+        }
+
+        .rb-print-btn {
+            background: #0c0c0c;
+            border: 0.5px solid #1e1e1e;
+            color: #777;
+            padding: 7px 16px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'Rajdhani', sans-serif;
+            transition: all 0.2s;
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .rb-print-btn:hover {
+            color: #fff;
+            border-color: #333;
+        }
+
+        .rb-top-bar {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.25rem;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ── HEADER ── -->
+    <header>
+        <div class="logo-container">
+            <img src="c:\Users\kopano\Downloads\EGL GLOW.png" alt="EGLORIA Logo" class="logo-img">
+            <div class="logo">EGLORIA</div>
+            <div class="dropdown">
+                <button class="dropdown-button" onclick="toggleDropdown()">☰</button>
+                <div class="dropdown-content" id="dropdownMenu">
+                    <div class="dropdown-category">News & Media</div>
+                    <a href="news.html" class="dropdown-item">News</a>
+                    <a href="#community-clips" class="dropdown-item">Community Clips</a>
+                    <a href="#wiki" class="dropdown-item">GFX Gallery</a>
+                    <a href="#changelog" class="dropdown-item">Changelog</a>
+                    <div class="dropdown-category">Transfers & Teams</div>
+                    <a href="#Teams" class="dropdown-item">Teams</a>
+                    <a href="#Transfers" class="dropdown-item">Transfers</a>
+                    <a href="#Budgets" class="dropdown-item">Budgets</a>
+                    <a href="#Tier-lists" class="dropdown-item">Tier-lists</a>
+                    <div class="dropdown-category">Resources (soon)</div>
+                    <a href="#features" class="dropdown-item">Features</a>
+                    <a href="#pricing" class="dropdown-item">Plans & Pricing</a>
+                    <a href="#tackyfy-bot" class="dropdown-item">EGL Assistant Bot</a>
+                    <a href="#wiki-guides" class="dropdown-item">Wiki & Guides</a>
+                    <div class="dropdown-category">Support Us</div>
+                    <a href="#advertise" class="dropdown-item">Advertise</a>
+                </div>
+            </div>
+        </div>
+        <nav class="nav-links">
+            <a href="Elite Global League Homepage.html">Home</a>
+            <a href="news.html">News</a>
+            <a href="profile designer.html">Shop</a>
+            <a href="Stats.html">League</a>
+            <a href="live.html">Live</a>
+            <a href="community.html">Community</a>
+        </nav>
+        <div class="nav-actions" id="navProfile">
+            <a href="login.html?redirect=Stats.html" class="cta-button login-button">Login</a>
+        </div>
+    </header>
+
+    <div class="page-wrapper">
+
+        <!-- ── LEAGUE HEADER CARD ── -->
+        <div class="league-header">
+            <div class="league-header-top">
+                <div class="league-logo">EGL</div>
+                <div class="league-header-text">
+                    <span class="league-platform-tag">roblox · real futbol 24</span>
+                    <h1>Elite Global League</h1>
+                    <p>The premier Roblox football esports league</p>
+                </div>
+                <div class="league-header-actions">
+                    <div class="btn-icon">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+                        </svg>
+                    </div>
+                    <button class="btn-enter">Enter Portal</button>
+                </div>
+            </div>
+            <div class="league-nav">
+                <button class="league-nav-tab active" onclick="switchTab('overview',this)">Overview</button>
+                <button class="league-nav-tab" onclick="switchTab('standings',this)">Scores &amp; Standings</button>
+                <button class="league-nav-tab" onclick="switchTab('tierlist',this)">Tierlist</button>
+                <button class="league-nav-tab" onclick="switchTab('transfers',this)">Transfers &amp; Teams</button>
+                <button class="league-nav-tab" onclick="switchTab('rulebook',this)">Rulebook</button>
+            </div>
+        </div>
+
+        <!-- ══════════════════════ OVERVIEW ══════════════════════ -->
+        <div class="tab-panel active" id="tab-overview">
+            <div class="league-intro">
+                <p>Competitive Real Futbol X Fan League — where legends are made, rivalries are born, and every match
+                    writes history.</p>
+                <p>Step into a highly competitive football environment where skill, discipline, and determination shape
+                    the path to greatness. EGL brings together ambitious players and elite teams, creating a platform
+                    where every match is meaningful and every performance counts.</p>
+                <p>Do you have what it takes to earn the title of a legend?</p>
+            </div>
+            <div class="league-stats">
+                <div class="stat-item">
+                    <div class="stat-num">109</div>
+                    <div class="stat-lbl">Members</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-num">40</div>
+                    <div class="stat-lbl">Teams</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-num">1500+</div>
+                    <div class="stat-lbl">Players</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-num">150+</div>
+                    <div class="stat-lbl">Goals</div>
+                </div>
+            </div>
+            <div class="league-matchbar">
+                <div class="mbar-item">
+                    <svg viewBox="0 0 24 24">
+                        <rect x="3" y="4" width="18" height="18" rx="2" />
+                        <line x1="16" y1="2" x2="16" y2="6" />
+                        <line x1="8" y1="2" x2="8" y2="6" />
+                        <line x1="3" y1="10" x2="21" y2="10" />
+                    </svg>
+                    122 / 125 Matches
+                </div>
+                <div class="mbar-dot"></div>
+                <div class="mbar-item">
+                    <svg viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10" />
+                        <path d="M12 8v4l3 3" />
+                    </svg>
+                    3.2 Goals / Match
+                </div>
+                <div class="mbar-dot"></div>
+                <div class="mbar-item">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                        <circle cx="9" cy="7" r="4" />
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                    </svg>
+                    5 Competitions
+                </div>
+            </div>
+            <div class="section-label">Season Highlights</div>
+            <div class="highlights-grid">
+                <div class="highlight-card">
+                    <div class="hc-top">
+                        <div class="hc-icon"><svg viewBox="0 0 24 24">
+                                <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" />
+                                <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" />
+                                <path d="M4 22h16" />
+                                <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22" />
+                                <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22" />
+                                <path d="M18 2H6v7a6 6 0 0 0 12 0V2z" />
+                            </svg></div>
+                        <div class="hc-badge">V</div>
+                    </div>
+                    <div class="hc-type">Biggest Win</div>
+                    <div class="hc-main">Villareal 11–1 Real Sociedad</div>
+                    <div class="hc-sub">Matchday 7</div>
+                </div>
+                <div class="highlight-card">
+                    <div class="hc-top">
+                        <div class="hc-icon"><svg viewBox="0 0 24 24">
+                                <circle cx="12" cy="12" r="10" />
+                                <path d="M12 8v8M8 12h8" />
+                            </svg></div>
+                        <div class="hc-badge">I</div>
+                    </div>
+                    <div class="hc-type">Most Goals</div>
+                    <div class="hc-main">Inter Milan 6–1 Fiorentina</div>
+                    <div class="hc-sub">6 goals total</div>
+                </div>
+                <div class="highlight-card">
+                    <div class="hc-top">
+                        <div class="hc-icon"><svg viewBox="0 0 24 24">
+                                <path
+                                    d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                            </svg></div>
+                        <div class="hc-badge">S</div>
+                    </div>
+                    <div class="hc-type">Top Scorer</div>
+                    <div class="hc-main">SWATYYYY</div>
+                    <div class="hc-sub">11+ goals</div>
+                </div>
+                <div class="highlight-card">
+                    <div class="hc-top">
+                        <div class="hc-icon"><svg viewBox="0 0 24 24">
+                                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
+                                <polyline points="17 6 23 6 23 12" />
+                            </svg></div>
+                        <div class="hc-badge">M</div>
+                    </div>
+                    <div class="hc-type">Longest Win Streak</div>
+                    <div class="hc-main">Manchester United</div>
+                    <div class="hc-sub">6+ wins in a row</div>
+                </div>
+                <div class="highlight-card">
+                    <div class="hc-top">
+                        <div class="hc-icon"><svg viewBox="0 0 24 24">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                            </svg></div>
+                        <div class="hc-badge">T</div>
+                    </div>
+                    <div class="hc-type">Shocker</div>
+                    <div class="hc-main">Tottenham 0–1 Liverpool</div>
+                    <div class="hc-sub">Premier League</div>
+                </div>
+            </div>
+            <div class="teams-header">
+                <div class="teams-title">Teams</div>
+                <a class="teams-viewall"
+                    onclick="switchTab('tierlist', document.querySelectorAll('.league-nav-tab')[2])">View tierlist</a>
+            </div>
+            <div class="teams-grid" id="teams-grid-overview"></div>
+        </div>
+
+        <!-- ══════════════════════ SCORES & STANDINGS ══════════════════════ -->
+        <div class="tab-panel" id="tab-standings">
+            <div class="view-toggle">
+                <button class="toggle-btn" id="btn-fixtures" onclick="showSubTab('fixtures')">Fixtures</button>
+                <button class="toggle-btn active" id="btn-stnd" onclick="showSubTab('standings')">Standings</button>
+            </div>
+            <div class="league-selector-row">
+                <div class="league-select-wrap">
+                    <select id="leagueSelect" onchange="renderStandings()">
+                        <option value="bundesliga">Bundesliga</option>
+                        <option value="premierleague">Premier League</option>
+                        <option value="laliga">La Liga</option>
+                        <option value="seriea">Serie A</option>
+                        <option value="ligue1">Ligue 1</option>
+                    </select>
+                </div>
+                <div class="league-tag">League</div>
+            </div>
+            <div id="sub-standings">
+                <div class="standings-table">
+                    <div class="table-head">
+                        <div class="th">#</div>
+                        <div class="th" style="text-align:left">Team</div>
+                        <div class="th">Form</div>
+                        <div class="th">P</div>
+                        <div class="th">W</div>
+                        <div class="th">D</div>
+                        <div class="th">L</div>
+                        <div class="th">GF</div>
+                        <div class="th">GD</div>
+                        <div class="th">PTS</div>
+                    </div>
+                    <div id="standings-body"></div>
+                </div>
+            </div>
+            <div id="sub-fixtures" style="display:none">
+                <div class="fixtures-list" id="fixtures-body"></div>
+            </div>
+        </div>
+
+        <!-- ══════════════════════ TIERLIST ══════════════════════ -->
+        <div class="tab-panel" id="tab-tierlist">
+            <div id="tierlist-content"></div>
+        </div>
+
+        <!-- ══════════════════════ TRANSFERS & TEAMS ══════════════════════ -->
+        <div class="tab-panel" id="tab-transfers">
+            <div class="sub-toggle">
+                <button class="sub-btn active" id="btn-transfers"
+                    onclick="showTransferTab('transfers')">Transfers</button>
+                <button class="sub-btn" id="btn-natteams" onclick="showTransferTab('natteams')">National Teams</button>
+            </div>
+            <div id="sub-transfer-content">
+                <div class="empty-state">
+                    <div class="empty-icon">⇅</div>
+                    <div class="empty-title">No Transfers</div>
+                    <div class="empty-sub">Transfer activity will appear here once deals are recorded.</div>
+                </div>
+            </div>
+            <div id="sub-natteams-content" style="display:none">
+                <div class="empty-state">
+                    <div class="empty-icon">🏳</div>
+                    <div class="empty-title">No National Teams</div>
+                    <div class="empty-sub">National team squads will appear here once registered.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ══════════════════════ RULEBOOK ══════════════════════ -->
+        <div class="tab-panel" id="tab-rulebook">
+            <div class="rb-top-bar">
+                <button class="rb-print-btn" onclick="window.print()">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="6 9 6 2 18 2 18 9" />
+                        <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
+                        <rect x="6" y="14" width="12" height="8" />
+                    </svg>
+                    Print
+                </button>
+            </div>
+            <div class="rulebook-layout">
+                <div class="rulebook-sidebar">
+                    <div class="rb-sidebar-title">Contents</div>
+                    <div class="rb-section-group">
+                        <div class="rb-section-heading">1 · In-Game Rules</div>
+                        <button class="rb-nav-item active" onclick="rbNavClick(this,'rule-hosts')">1.1 Hosts &amp;
+                            Halftime</button>
+                        <button class="rb-nav-item" onclick="rbNavClick(this,'rule-mercy')">1.2 Mercy Rule</button>
+                        <button class="rb-nav-item" onclick="rbNavClick(this,'rule-passback')">1.3 Pass Back
+                            (PB)</button>
+                        <button class="rb-nav-item" onclick="rbNavClick(this,'rule-lastcb')">1.4 Last
+                            Centerback</button>
+                        <button class="rb-nav-item" onclick="rbNavClick(this,'rule-timewaste')">1.5 Time
+                            Wasting</button>
+                        <button class="rb-nav-item" onclick="rbNavClick(this,'rule-wifi')">1.6 Unstable WiFi</button>
+                        <button class="rb-nav-item" onclick="rbNavClick(this,'rule-illegal')">1.7 Fielding Illegal
+                            Players</button>
+                        <button class="rb-nav-item" onclick="rbNavClick(this,'rule-ragdoll')">1.8 Ragdoll Save</button>
+                        <button class="rb-nav-item" onclick="rbNavClick(this,'rule-lastman')">1.9 Last Man</button>
+                        <button class="rb-nav-item" onclick="rbNavClick(this,'rule-corners')">1.10 Spacing/Corner
+                            Rushing</button>
+                        <button class="rb-nav-item" onclick="rbNavClick(this,'rule-fouls')">1.11 Intentional
+                            Fouls</button>
+                        <button class="rb-nav-item" onclick="rbNavClick(this,'rule-thirdparty')">1.12 Third-Party
+                            Software</button>
+                        <button class="rb-nav-item" onclick="rbNavClick(this,'rule-exploit')">1.13 Exploitation</button>
+                        <button class="rb-nav-item" onclick="rbNavClick(this,'rule-delay')">1.14 Delay</button>
+                        <button class="rb-nav-item" onclick="rbNavClick(this,'rule-redcards')">1.15 Red Cards</button>
+                        <button class="rb-nav-item" onclick="rbNavClick(this,'rule-glitch')">1.16 In-Game
+                            Glitching</button>
+                        <button class="rb-nav-item" onclick="rbNavClick(this,'rule-kickoffs')">1.17 Kick-Offs</button>
+                        <button class="rb-nav-item" onclick="rbNavClick(this,'rule-troll')">1.18
+                            Trolling/Sabotage</button>
+                        <button class="rb-nav-item" onclick="rbNavClick(this,'rule-knockout')">1.19 Knockout
+                            Games</button>
+                        <button class="rb-nav-item" onclick="rbNavClick(this,'rule-sidenet')">1.20 Side Net</button>
+                        <button class="rb-nav-item" onclick="rbNavClick(this,'rule-penalties')">1.21 Penalties</button>
+                    </div>
+                    <div class="rb-section-group">
+                        <div class="rb-section-heading">2 · League Rules</div>
+                        <button class="rb-nav-item" onclick="rbNavClick(this,'rule-jailing')">2.1 Jailing</button>
+                        <button class="rb-nav-item" onclick="rbNavClick(this,'rule-esignings')">2.2 Emergency
+                            Signings</button>
+                        <button class="rb-nav-item" onclick="rbNavClick(this,'rule-hosts2')">2.3 Hosts</button>
+                        <button class="rb-nav-item" onclick="rbNavClick(this,'rule-subs')">2.4 Substitutions</button>
+                        <button class="rb-nav-item" onclick="rbNavClick(this,'rule-manager')">2.5 Manager
+                            Activity</button>
+                        <button class="rb-nav-item" onclick="rbNavClick(this,'rule-transfers2')">2.6 Transfer
+                            Rules</button>
+                        <button class="rb-nav-item" onclick="rbNavClick(this,'rule-arriving')">2.7 Arriving at
+                            Matches</button>
+                        <button class="rb-nav-item" onclick="rbNavClick(this,'rule-streamref')">2.8 Stream /
+                            Referee</button>
+                        <button class="rb-nav-item" onclick="rbNavClick(this,'rule-pp')">2.9 Postponing (PP)</button>
+                        <button class="rb-nav-item" onclick="rbNavClick(this,'rule-integrity')">2.10 Competitive
+                            Integrity</button>
+                        <button class="rb-nav-item" onclick="rbNavClick(this,'rule-evidence')">2.11 Note on
+                            Evidence</button>
+                        <button class="rb-nav-item" onclick="rbNavClick(this,'rule-selfpass')">2.12 Self Pass</button>
+                        <button class="rb-nav-item" onclick="rbNavClick(this,'rule-loans')">2.13 Loans</button>
+                        <button class="rb-nav-item" onclick="rbNavClick(this,'rule-lineups')">2.14 Lineups</button>
+                        <button class="rb-nav-item" onclick="rbNavClick(this,'rule-cheating')">2.15 Cheating</button>
+                        <button class="rb-nav-item" onclick="rbNavClick(this,'rule-servers')">2.16 Servers</button>
+                    </div>
+                </div>
+
+                <div class="rulebook-content">
+                    <div class="rb-header-card">
+                        <div class="rb-header-top">
+                            <span class="rb-official-badge">✓ Official</span>
+                            <span class="rb-version">v1</span>
+                            <span class="rb-updated">Updated 15 Feb 2026</span>
+                        </div>
+                        <div class="rb-title">Official League Rulebook</div>
+                        <div class="rb-subtitle">Guidelines and standards for a fair, competitive, and enjoyable
+                            experience in <strong>EGL</strong> league matches and administration.</div>
+                    </div>
+
+                    <!-- SECTION 1 -->
+                    <div class="rb-section">
+                        <div class="rb-section-title-bar">In-Game Rules</div>
+
+                        <div class="rb-rule-card open" id="rule-hosts">
+                            <div class="rb-rule-header" onclick="toggleRule(this)">
+                                <span class="rb-rule-num">1.1</span>
+                                <span class="rb-rule-title">Hosts &amp; Halftime</span>
+                                <span class="rb-rule-chevron">▾</span>
+                            </div>
+                            <div class="rb-rule-body">
+                                <p class="rb-rule-text">Each team is allowed to host one half of the match in their
+                                    region. Failure to join the other team's host will result in an automatic loss.</p>
+                                <p class="rb-rule-text">During the second half, if your team has not hosted yet, you may
+                                    request to switch to your host. If no request is made, continuing to play in the
+                                    same host will be considered acceptance of that host, and the half will not be
+                                    replayed.</p>
+                                <p class="rb-rule-text">If the match proceeds to extra time (tournament matches), the
+                                    first half of extra time will be played in the same host as the most recent half.
+                                    The second half of extra time may be switched to the other team's host if they
+                                    request it.</p>
+                                <div class="rb-penalty-box">
+                                    <div class="rb-penalty-line warn"><strong>Penalty:</strong> Auto loss or voided
+                                        match</div>
+                                    <div class="rb-penalty-line"><strong>Appeal:</strong> No (Host decisions must be
+                                        made during the match)</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="rb-rule-card" id="rule-mercy">
+                            <div class="rb-rule-header" onclick="toggleRule(this)">
+                                <span class="rb-rule-num">1.2</span>
+                                <span class="rb-rule-title">Mercy Rule</span>
+                                <span class="rb-rule-chevron">▾</span>
+                            </div>
+                            <div class="rb-rule-body">
+                                <p class="rb-rule-text">The mercy rule enforces the game to be stopped after a certain
+                                    goal difference is achieved. A team managing a goal difference of 6 goals will
+                                    automatically win, and the game will be stopped regardless of the leg.</p>
+                                <p class="rb-rule-text">For example, if the score reaches 6-0, the team who scored 6
+                                    goals will automatically win, and the game will be stopped regardless of the leg.
+                                </p>
+                                <div class="rb-penalty-box">
+                                    <div class="rb-penalty-line ok"><strong>Result:</strong> Automatic win declared at
+                                        6-goal difference</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="rb-rule-card" id="rule-passback">
+                            <div class="rb-rule-header" onclick="toggleRule(this)">
+                                <span class="rb-rule-num">1.3</span>
+                                <span class="rb-rule-title">Pass Back (PB)</span>
+                                <span class="rb-rule-chevron">▾</span>
+                            </div>
+                            <div class="rb-rule-body">
+                                <p class="rb-rule-text">Intentional pass-backs to the goalkeeper from open play are not
+                                    permitted. The goalkeeper must not pick up a deliberate pass-back from a teammate
+                                    with their hands.</p>
+                                <div class="rb-penalty-box">
+                                    <div class="rb-penalty-line warn"><strong>Penalty:</strong> Free kick awarded to
+                                        opposing team</div>
+                                    <div class="rb-penalty-line warn"><strong>Repeat offence:</strong> Yellow card</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="rb-rule-card" id="rule-lastcb">
+                            <div class="rb-rule-header" onclick="toggleRule(this)">
+                                <span class="rb-rule-num">1.4</span>
+                                <span class="rb-rule-title">Last Centerback</span>
+                                <span class="rb-rule-chevron">▾</span>
+                            </div>
+                            <div class="rb-rule-body">
+                                <p class="rb-rule-text">If your last centerback receives a red card, you may request a
+                                    temporary substitution to maintain defensive shape. This must be agreed upon before
+                                    the match or declared within 2 minutes of the incident.</p>
+                                <div class="rb-penalty-box">
+                                    <div class="rb-penalty-line"><strong>Appeal:</strong> Yes — within 2 minutes of the
+                                        incident</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="rb-rule-card" id="rule-timewaste">
+                            <div class="rb-rule-header" onclick="toggleRule(this)">
+                                <span class="rb-rule-num">1.5</span><span class="rb-rule-title">Time Wasting</span><span
+                                    class="rb-rule-chevron">▾</span>
+                            </div>
+                            <div class="rb-rule-body">
+                                <p class="rb-rule-text">Deliberate time wasting in any form — including holding the ball
+                                    excessively in the goalkeeper's hands, taking unusually long goal kicks, or stalling
+                                    restarts — is prohibited.</p>
+                                <div class="rb-penalty-box">
+                                    <div class="rb-penalty-line warn"><strong>Penalty:</strong> Yellow card; repeated
+                                        offences result in a red card</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="rb-rule-card" id="rule-wifi">
+                            <div class="rb-rule-header" onclick="toggleRule(this)">
+                                <span class="rb-rule-num">1.6</span><span class="rb-rule-title">Unstable
+                                    WiFi</span><span class="rb-rule-chevron">▾</span>
+                            </div>
+                            <div class="rb-rule-body">
+                                <p class="rb-rule-text">If a player disconnects due to unstable WiFi, the team may pause
+                                    to allow the player to reconnect. A maximum of 5 minutes is allowed for
+                                    reconnection. Persistent disconnections may result in a forfeit.</p>
+                                <div class="rb-penalty-box">
+                                    <div class="rb-penalty-line"><strong>Grace period:</strong> 5 minutes to reconnect
+                                    </div>
+                                    <div class="rb-penalty-line warn"><strong>Failure to reconnect:</strong> Match
+                                        continues without the player or result stands</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="rb-rule-card" id="rule-illegal">
+                            <div class="rb-rule-header" onclick="toggleRule(this)">
+                                <span class="rb-rule-num">1.7</span><span class="rb-rule-title">Fielding Illegal
+                                    Players</span><span class="rb-rule-chevron">▾</span>
+                            </div>
+                            <div class="rb-rule-body">
+                                <p class="rb-rule-text">Teams must only field registered players. Using unregistered or
+                                    banned players in a match is strictly prohibited and will result in severe penalties
+                                    for the club.</p>
+                                <div class="rb-penalty-box">
+                                    <div class="rb-penalty-line warn"><strong>Penalty:</strong> Match forfeit (0-3 loss)
+                                        + potential points deduction</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="rb-rule-card" id="rule-ragdoll">
+                            <div class="rb-rule-header" onclick="toggleRule(this)">
+                                <span class="rb-rule-num">1.8</span><span class="rb-rule-title">Ragdoll Save</span><span
+                                    class="rb-rule-chevron">▾</span>
+                            </div>
+                            <div class="rb-rule-body">
+                                <p class="rb-rule-text">Intentionally using ragdoll physics to save or block shots is
+                                    considered exploiting the game mechanics and is not permitted.</p>
+                                <div class="rb-penalty-box">
+                                    <div class="rb-penalty-line warn"><strong>Penalty:</strong> Goal awarded + yellow
+                                        card</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="rb-rule-card" id="rule-lastman">
+                            <div class="rb-rule-header" onclick="toggleRule(this)">
+                                <span class="rb-rule-num">1.9</span><span class="rb-rule-title">Last Man</span><span
+                                    class="rb-rule-chevron">▾</span>
+                            </div>
+                            <div class="rb-rule-body">
+                                <p class="rb-rule-text">If only one outfield player remains due to disconnections, the
+                                    match will be paused and the team will be given 3 minutes to reconnect additional
+                                    players before the match is either continued or forfeited.</p>
+                            </div>
+                        </div>
+
+                        <div class="rb-rule-card" id="rule-corners">
+                            <div class="rb-rule-header" onclick="toggleRule(this)">
+                                <span class="rb-rule-num">1.10</span><span class="rb-rule-title">Spacing / Corner
+                                    Rushing</span><span class="rb-rule-chevron">▾</span>
+                            </div>
+                            <div class="rb-rule-body">
+                                <p class="rb-rule-text">Players must maintain fair spacing during set pieces. Rushing
+                                    the corner taker or crowding the penalty area before a corner kick is taken is
+                                    prohibited.</p>
+                                <div class="rb-penalty-box">
+                                    <div class="rb-penalty-line warn"><strong>Penalty:</strong> Retaken corner or free
+                                        kick</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="rb-rule-card" id="rule-fouls">
+                            <div class="rb-rule-header" onclick="toggleRule(this)">
+                                <span class="rb-rule-num">1.11</span><span class="rb-rule-title">Intentional
+                                    Fouls</span><span class="rb-rule-chevron">▾</span>
+                            </div>
+                            <div class="rb-rule-body">
+                                <p class="rb-rule-text">Deliberately fouling a player to stop a goal-scoring opportunity
+                                    or break up play repeatedly will be penalised. This includes slide tackle spam or
+                                    body check abuse.</p>
+                                <div class="rb-penalty-box">
+                                    <div class="rb-penalty-line warn"><strong>Penalty:</strong> Yellow or red card at
+                                        referee's discretion</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="rb-rule-card" id="rule-thirdparty">
+                            <div class="rb-rule-header" onclick="toggleRule(this)">
+                                <span class="rb-rule-num">1.12</span><span class="rb-rule-title">Third-Party
+                                    Software</span><span class="rb-rule-chevron">▾</span>
+                            </div>
+                            <div class="rb-rule-body">
+                                <p class="rb-rule-text">The use of any third-party software, macros, scripts, or
+                                    modifications that provide an unfair advantage is strictly forbidden and constitutes
+                                    cheating.</p>
+                                <div class="rb-penalty-box">
+                                    <div class="rb-penalty-line warn"><strong>Penalty:</strong> Immediate ban from the
+                                        league</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="rb-rule-card" id="rule-exploit">
+                            <div class="rb-rule-header" onclick="toggleRule(this)">
+                                <span class="rb-rule-num">1.13</span><span class="rb-rule-title">Exploitation During
+                                    Matches</span><span class="rb-rule-chevron">▾</span>
+                            </div>
+                            <div class="rb-rule-body">
+                                <p class="rb-rule-text">Exploiting game bugs, glitches, or unintended mechanics during a
+                                    match is not permitted. This includes but is not limited to wall clipping, physics
+                                    abuse, or animation cancelling for competitive advantage.</p>
+                                <div class="rb-penalty-box">
+                                    <div class="rb-penalty-line warn"><strong>Penalty:</strong> Match voided or result
+                                        reversed + suspension</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="rb-rule-card" id="rule-delay">
+                            <div class="rb-rule-header" onclick="toggleRule(this)">
+                                <span class="rb-rule-num">1.14</span><span class="rb-rule-title">Delay</span><span
+                                    class="rb-rule-chevron">▾</span>
+                            </div>
+                            <div class="rb-rule-body">
+                                <p class="rb-rule-text">Teams must be ready to start within 10 minutes of the scheduled
+                                    kick-off time. Delays beyond this window without prior communication will result in
+                                    a forfeit.</p>
+                                <div class="rb-penalty-box">
+                                    <div class="rb-penalty-line warn"><strong>Penalty:</strong> Forfeit after 10 minutes
+                                        of delay</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="rb-rule-card" id="rule-redcards">
+                            <div class="rb-rule-header" onclick="toggleRule(this)">
+                                <span class="rb-rule-num">1.15</span><span class="rb-rule-title">Red Cards</span><span
+                                    class="rb-rule-chevron">▾</span>
+                            </div>
+                            <div class="rb-rule-body">
+                                <p class="rb-rule-text">A player who receives a red card during a match is suspended for
+                                    the following league match. Two yellow cards in the same match also result in a red
+                                    card and the same suspension applies.</p>
+                                <div class="rb-penalty-box">
+                                    <div class="rb-penalty-line warn"><strong>Suspension:</strong> 1 match ban (minimum)
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="rb-rule-card" id="rule-glitch">
+                            <div class="rb-rule-header" onclick="toggleRule(this)">
+                                <span class="rb-rule-num">1.16</span><span class="rb-rule-title">In-Game
+                                    Glitching</span><span class="rb-rule-chevron">▾</span>
+                            </div>
+                            <div class="rb-rule-body">
+                                <p class="rb-rule-text">Using known in-game glitches to gain an unfair advantage — such
+                                    as going through walls, invisible player exploits, or animation-lock abuse — is a
+                                    bannable offence.</p>
+                                <div class="rb-penalty-box">
+                                    <div class="rb-penalty-line warn"><strong>Penalty:</strong> Match void + 2-match ban
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="rb-rule-card" id="rule-kickoffs">
+                            <div class="rb-rule-header" onclick="toggleRule(this)">
+                                <span class="rb-rule-num">1.17</span><span class="rb-rule-title">Kick-Offs</span><span
+                                    class="rb-rule-chevron">▾</span>
+                            </div>
+                            <div class="rb-rule-body">
+                                <p class="rb-rule-text">At kick-off, all players must be in their respective halves. The
+                                    ball must be touched by two players before it can leave the centre circle. Kick-off
+                                    goals are not counted unless the ball has been touched by two players first.</p>
+                            </div>
+                        </div>
+
+                        <div class="rb-rule-card" id="rule-troll">
+                            <div class="rb-rule-header" onclick="toggleRule(this)">
+                                <span class="rb-rule-num">1.18</span><span class="rb-rule-title">Trolling /
+                                    Sabotage</span><span class="rb-rule-chevron">▾</span>
+                            </div>
+                            <div class="rb-rule-body">
+                                <p class="rb-rule-text">Any player found deliberately sabotaging their own team,
+                                    trolling opponents, using offensive language in match, or intentionally causing
+                                    disruption will be penalised.</p>
+                                <div class="rb-penalty-box">
+                                    <div class="rb-penalty-line warn"><strong>Penalty:</strong> Instant removal from
+                                        match + suspension review</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="rb-rule-card" id="rule-knockout">
+                            <div class="rb-rule-header" onclick="toggleRule(this)">
+                                <span class="rb-rule-num">1.19</span><span class="rb-rule-title">Knockout
+                                    Games</span><span class="rb-rule-chevron">▾</span>
+                            </div>
+                            <div class="rb-rule-body">
+                                <p class="rb-rule-text">Knockout matches that end in a draw after 90 minutes will
+                                    proceed to extra time (2x10 minutes). If still level, a penalty shootout will decide
+                                    the winner. Standard shootout rules apply (5 kicks each, then sudden death).</p>
+                            </div>
+                        </div>
+
+                        <div class="rb-rule-card" id="rule-sidenet">
+                            <div class="rb-rule-header" onclick="toggleRule(this)">
+                                <span class="rb-rule-num">1.20</span><span class="rb-rule-title">Side Net</span><span
+                                    class="rb-rule-chevron">▾</span>
+                            </div>
+                            <div class="rb-rule-body">
+                                <p class="rb-rule-text">Goals that enter via the side netting are not counted. If there
+                                    is visible proof a ball entered via the side net, the goal will be disallowed and
+                                    play restarted with a goal kick.</p>
+                                <div class="rb-penalty-box">
+                                    <div class="rb-penalty-line"><strong>Appeal:</strong> Yes — video proof required
+                                        within 5 minutes</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="rb-rule-card" id="rule-penalties">
+                            <div class="rb-rule-header" onclick="toggleRule(this)">
+                                <span class="rb-rule-num">1.21</span><span class="rb-rule-title">Penalties</span><span
+                                    class="rb-rule-chevron">▾</span>
+                            </div>
+                            <div class="rb-rule-body">
+                                <p class="rb-rule-text">Penalty kicks during normal play follow standard rules. The
+                                    goalkeeper must remain on the goal line until the ball is kicked. The taker cannot
+                                    touch the ball again until another player has touched it.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SECTION 2 -->
+                    <div class="rb-section">
+                        <div class="rb-section-title-bar">League Rules</div>
+
+                        <div class="rb-rule-card" id="rule-jailing">
+                            <div class="rb-rule-header" onclick="toggleRule(this)">
+                                <span class="rb-rule-num">2.1</span><span class="rb-rule-title">Jailing</span><span
+                                    class="rb-rule-chevron">▾</span>
+                            </div>
+                            <div class="rb-rule-body">
+                                <p class="rb-rule-text">A player who goes absent without notice for more than 3
+                                    scheduled match weeks will be jailed — meaning frozen from all transfer activity and
+                                    placed on a watchlist. Jailed players cannot play in official matches until
+                                    reinstated.</p>
+                                <div class="rb-penalty-box">
+                                    <div class="rb-penalty-line warn"><strong>Condition:</strong> 3+ weeks absent
+                                        without notification</div>
+                                    <div class="rb-penalty-line"><strong>Resolution:</strong> Contact admin to be
+                                        reinstated</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="rb-rule-card" id="rule-esignings">
+                            <div class="rb-rule-header" onclick="toggleRule(this)">
+                                <span class="rb-rule-num">2.2</span><span class="rb-rule-title">Emergency
+                                    Signings</span><span class="rb-rule-chevron">▾</span>
+                            </div>
+                            <div class="rb-rule-body">
+                                <p class="rb-rule-text">If a team has fewer than 5 available players for a scheduled
+                                    match, they may request an emergency signing. The signed player must be a free agent
+                                    and the request must be made at least 2 hours before kick-off.</p>
+                                <div class="rb-penalty-box">
+                                    <div class="rb-penalty-line"><strong>Limit:</strong> 1 emergency signing per
+                                        matchday</div>
+                                    <div class="rb-penalty-line"><strong>Window:</strong> Must be done 2+ hours before
+                                        kick-off</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="rb-rule-card" id="rule-hosts2">
+                            <div class="rb-rule-header" onclick="toggleRule(this)">
+                                <span class="rb-rule-num">2.3</span><span class="rb-rule-title">Hosts</span><span
+                                    class="rb-rule-chevron">▾</span>
+                            </div>
+                            <div class="rb-rule-body">
+                                <p class="rb-rule-text">The home team is responsible for setting up the match server for
+                                    the first half. Both teams must agree on the host region. If no agreement is
+                                    reached, the league admin will assign a neutral host.</p>
+                            </div>
+                        </div>
+
+                        <div class="rb-rule-card" id="rule-subs">
+                            <div class="rb-rule-header" onclick="toggleRule(this)">
+                                <span class="rb-rule-num">2.4</span><span
+                                    class="rb-rule-title">Substitutions</span><span class="rb-rule-chevron">▾</span>
+                            </div>
+                            <div class="rb-rule-body">
+                                <p class="rb-rule-text">Each team is allowed up to 5 substitutions per match.
+                                    Substitutions can only be made during a stoppage in play. The substitute must be
+                                    registered in the team's squad before the match begins.</p>
+                                <div class="rb-penalty-box">
+                                    <div class="rb-penalty-line ok"><strong>Max substitutions:</strong> 5 per match
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="rb-rule-card" id="rule-manager">
+                            <div class="rb-rule-header" onclick="toggleRule(this)">
+                                <span class="rb-rule-num">2.5</span><span class="rb-rule-title">Manager
+                                    Activity</span><span class="rb-rule-chevron">▾</span>
+                            </div>
+                            <div class="rb-rule-body">
+                                <p class="rb-rule-text">Managers are required to be active and available for all
+                                    official matchdays. A manager who misses two or more consecutive match weeks without
+                                    notifying the league admin may be replaced.</p>
+                                <div class="rb-penalty-box">
+                                    <div class="rb-penalty-line warn"><strong>Consequence:</strong> Manager removal
+                                        after 2 missed matchdays without notice</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="rb-rule-card" id="rule-transfers2">
+                            <div class="rb-rule-header" onclick="toggleRule(this)">
+                                <span class="rb-rule-num">2.6</span><span class="rb-rule-title">Transfer
+                                    Rules</span><span class="rb-rule-chevron">▾</span>
+                            </div>
+                            <div class="rb-rule-body">
+                                <p class="rb-rule-text">All transfers must be processed through the official transfer
+                                    portal. Players cannot be transferred mid-matchweek. A player cannot play for their
+                                    new club in the same matchday their transfer was processed.</p>
+                                <div class="rb-penalty-box">
+                                    <div class="rb-penalty-line"><strong>Window:</strong> Between matchdays only</div>
+                                    <div class="rb-penalty-line warn"><strong>Breach:</strong> Transfer invalidated +
+                                        points deduction</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="rb-rule-card" id="rule-arriving">
+                            <div class="rb-rule-header" onclick="toggleRule(this)">
+                                <span class="rb-rule-num">2.7</span><span class="rb-rule-title">Arriving at
+                                    Matches</span><span class="rb-rule-chevron">▾</span>
+                            </div>
+                            <div class="rb-rule-body">
+                                <p class="rb-rule-text">All players must be in the lobby and ready at least 5 minutes
+                                    before kick-off. The match can begin when both teams have a minimum of 5 outfield
+                                    players + 1 goalkeeper present and ready.</p>
+                                <div class="rb-penalty-box">
+                                    <div class="rb-penalty-line"><strong>Minimum:</strong> 5 outfield + 1 GK to start
+                                    </div>
+                                    <div class="rb-penalty-line warn"><strong>Failure:</strong> Forfeit after 10-minute
+                                        grace period</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="rb-rule-card" id="rule-streamref">
+                            <div class="rb-rule-header" onclick="toggleRule(this)">
+                                <span class="rb-rule-num">2.8</span><span class="rb-rule-title">Stream /
+                                    Referee</span><span class="rb-rule-chevron">▾</span>
+                            </div>
+                            <div class="rb-rule-body">
+                                <p class="rb-rule-text">A match cannot be played until all of the following are
+                                    confirmed and present:</p>
+                                <div class="rb-penalty-box">
+                                    <div class="rb-penalty-line ok"><strong>Required:</strong> A referee must be present
+                                        before kick-off</div>
+                                    <div class="rb-penalty-line ok"><strong>Required:</strong> A streamer must be
+                                        present before kick-off</div>
+                                    <div class="rb-penalty-line ok"><strong>Required:</strong> Both managers must be
+                                        present before kick-off</div>
+                                </div>
+                                <p class="rb-rule-text" style="margin-top:10px;">If any of the above conditions are not
+                                    met at kick-off time, the match must be delayed until they are fulfilled or
+                                    rescheduled via the postponement process.</p>
+                            </div>
+                        </div>
+
+                        <div class="rb-rule-card" id="rule-pp">
+                            <div class="rb-rule-header" onclick="toggleRule(this)">
+                                <span class="rb-rule-num">2.9</span><span class="rb-rule-title">Postponing
+                                    (PP)</span><span class="rb-rule-chevron">▾</span>
+                            </div>
+                            <div class="rb-rule-body">
+                                <p class="rb-rule-text">Matches may be postponed or preponed within a window of 3 hours
+                                    to 1 day before or after the originally scheduled kick-off time.</p>
+                                <p class="rb-rule-text">Both preponing and postponing require agreement from both
+                                    managers before the change is confirmed. A manager cannot request a postponement
+                                    without providing a valid reason to the league admin.</p>
+                                <div class="rb-penalty-box">
+                                    <div class="rb-penalty-line"><strong>Window:</strong> 3 hours – 1 day before or
+                                        after scheduled time</div>
+                                    <div class="rb-penalty-line"><strong>Requirement:</strong> Mutual agreement from
+                                        both managers</div>
+                                    <div class="rb-penalty-line warn"><strong>Invalid request:</strong> No valid reason
+                                        = request denied</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="rb-rule-card" id="rule-integrity">
+                            <div class="rb-rule-header" onclick="toggleRule(this)">
+                                <span class="rb-rule-num">2.10</span><span class="rb-rule-title">Competitive
+                                    Integrity</span><span class="rb-rule-chevron">▾</span>
+                            </div>
+                            <div class="rb-rule-body">
+                                <p class="rb-rule-text">To maintain the competitive standard of the league, a team
+                                    cannot lose 2 or more matches by the mercy rule within a single season.</p>
+                                <p class="rb-rule-text">Teams that accumulate multiple mercy rule losses may be reviewed
+                                    and subject to disbandment at the discretion of league administration.</p>
+                                <div class="rb-penalty-box">
+                                    <div class="rb-penalty-line warn"><strong>Limit:</strong> Maximum 1 mercy rule loss
+                                        per season</div>
+                                    <div class="rb-penalty-line warn"><strong>Consequence:</strong> 2+ mercy losses may
+                                        result in team disbandment</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="rb-rule-card" id="rule-evidence">
+                            <div class="rb-rule-header" onclick="toggleRule(this)">
+                                <span class="rb-rule-num">2.11</span><span class="rb-rule-title">Note on
+                                    Evidence</span><span class="rb-rule-chevron">▾</span>
+                            </div>
+                            <div class="rb-rule-body">
+                                <p class="rb-rule-text">Any evidence submitted in connection with a report, dispute, or
+                                    appeal must be no older than 14 days (2 weeks) from the date of the incident.</p>
+                                <p class="rb-rule-text">This rule exists to prevent blackmail, undue pressure, and the
+                                    use of outdated material to unfairly target individuals within the league community.
+                                </p>
+                                <div class="rb-penalty-box">
+                                    <div class="rb-penalty-line warn"><strong>Admissibility limit:</strong> 14 days from
+                                        incident date</div>
+                                    <div class="rb-penalty-line"><strong>Reason:</strong> Prevents blackmail and undue
+                                        pressure on individuals</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="rb-rule-card" id="rule-selfpass">
+                            <div class="rb-rule-header" onclick="toggleRule(this)">
+                                <span class="rb-rule-num">2.12</span><span class="rb-rule-title">Self Pass</span><span
+                                    class="rb-rule-chevron">▾</span>
+                            </div>
+                            <div class="rb-rule-body">
+                                <p class="rb-rule-text">A self pass occurs when a player throws or kicks the ball
+                                    directly to themselves without another player touching it in between.</p>
+                                <p class="rb-rule-text">If a self pass is committed, it will result in a foul being
+                                    called and a free kick awarded to the opposition from the spot of the infringement.
+                                </p>
+                                <div class="rb-penalty-box">
+                                    <div class="rb-penalty-line warn"><strong>Penalty:</strong> Foul called + free kick
+                                        awarded to opposition</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="rb-rule-card" id="rule-loans">
+                            <div class="rb-rule-header" onclick="toggleRule(this)">
+                                <span class="rb-rule-num">2.13</span><span class="rb-rule-title">Loans</span><span
+                                    class="rb-rule-chevron">▾</span>
+                            </div>
+                            <div class="rb-rule-body">
+                                <p class="rb-rule-text">A loan occurs when a team fields a player who is not officially
+                                    signed to their squad. Using loaned players without proper registration is a
+                                    violation of squad rules.</p>
+                                <p class="rb-rule-text">If a team fields 2 or more unregistered loan players in a single
+                                    match, it will result in an immediate forfeit (FFT) for that team.</p>
+                                <div class="rb-penalty-box">
+                                    <div class="rb-penalty-line"><strong>1 loan player:</strong> Warning issued</div>
+                                    <div class="rb-penalty-line warn"><strong>2+ loan players:</strong> Immediate
+                                        forfeit (FFT)</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="rb-rule-card" id="rule-lineups">
+                            <div class="rb-rule-header" onclick="toggleRule(this)">
+                                <span class="rb-rule-num">2.14</span><span class="rb-rule-title">Lineups</span><span
+                                    class="rb-rule-chevron">▾</span>
+                            </div>
+                            <div class="rb-rule-body">
+                                <p class="rb-rule-text">Both teams are required to submit their starting lineups between
+                                    30 and 20 minutes before kick-off. Lineups must be sent to the designated channel or
+                                    referee before this window closes.</p>
+                                <p class="rb-rule-text">If one or both teams fail to submit their lineup within the
+                                    required timeframe, the offending team(s) will be considered to have forfeited the
+                                    match immediately.</p>
+                                <div class="rb-penalty-box">
+                                    <div class="rb-penalty-line"><strong>Window:</strong> 30 – 20 minutes before
+                                        kick-off</div>
+                                    <div class="rb-penalty-line warn"><strong>Late or missing lineup:</strong> Immediate
+                                        FFT (forfeit)</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="rb-rule-card" id="rule-cheating">
+                            <div class="rb-rule-header" onclick="toggleRule(this)">
+                                <span class="rb-rule-num">2.15</span><span class="rb-rule-title">Cheating</span><span
+                                    class="rb-rule-chevron">▾</span>
+                            </div>
+                            <div class="rb-rule-body">
+                                <p class="rb-rule-text">Any player or team caught cheating during a match will face
+                                    immediate consequences. Cheating includes but is not limited to:</p>
+                                <div class="rb-penalty-box" style="margin-bottom:10px;">
+                                    <div class="rb-penalty-line"><strong>•</strong> Anchoring the ball (<code
+                                            style="color:#888;font-size:11px;">:a</code>) multiple times deliberately
+                                    </div>
+                                    <div class="rb-penalty-line"><strong>•</strong> Manipulating or falsifying the
+                                        scoreline</div>
+                                    <div class="rb-penalty-line"><strong>•</strong> Any other form of match manipulation
+                                    </div>
+                                </div>
+                                <div class="rb-penalty-box">
+                                    <div class="rb-penalty-line warn"><strong>Punishment:</strong> Automatic win awarded
+                                        to the opposition</div>
+                                    <div class="rb-penalty-line warn"><strong>Severe cases:</strong> League ban under
+                                        1.12 (Third-Party Software)</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="rb-rule-card" id="rule-servers">
+                            <div class="rb-rule-header" onclick="toggleRule(this)">
+                                <span class="rb-rule-num">2.16</span><span class="rb-rule-title">Servers</span><span
+                                    class="rb-rule-chevron">▾</span>
+                            </div>
+                            <div class="rb-rule-body">
+                                <p class="rb-rule-text">All server types are permitted for use in matches with the
+                                    exception of those listed below. Using a banned server type will result in the match
+                                    being voided or forfeited.</p>
+                                <p class="rb-rule-text">If the opposition team selects the same PST server again after
+                                    already using it, it is considered an immediate automatic forfeit (FFT) for that
+                                    team.</p>
+                                <div class="rb-penalty-box" style="margin-bottom:10px;">
+                                    <div class="rb-penalty-line warn"><strong>Banned server type:</strong> PST Servers
+                                        (repeated use by same team)</div>
+                                    <div class="rb-penalty-line"><strong>Note:</strong> Additional banned server types
+                                        will be announced as the season progresses</div>
+                                </div>
+                                <div class="rb-penalty-box">
+                                    <div class="rb-penalty-line warn"><strong>Punishment:</strong> Immediate auto FFT
+                                        (forfeit) for the offending team</div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div><!-- end page-wrapper -->
+
+    <script>
+        // ── TAB SWITCHING ──
+        function switchTab(tabId, btn) {
+            document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.league-nav-tab').forEach(t => t.classList.remove('active'));
+            document.getElementById('tab-' + tabId).classList.add('active');
+            btn.classList.add('active');
+            if (tabId === 'standings') renderStandings();
+            if (tabId === 'tierlist') renderTierlist();
+        }
+
+        // ── SCORES & STANDINGS DATA ──
+        function makeZeroTeams(names) {
+            return names.map((n, i) => ({ rank: i + 1, name: n, badge: n[0], p: 0, w: 0, d: 0, l: 0, gf: 0, ga: 0, gd: '0', pts: 0, form: [] }));
+        }
+        const leagueData = {
+            bundesliga: {
+                standings: makeZeroTeams(['Bayern Munich', 'Monchengladbach', 'RB Leipzig', 'Stuttgart', 'Wolfsburg', 'Borussia Dortmund', 'Bayer Leverkusen', 'Frankfurt']),
+                fixtures: []
+            },
+            premierleague: {
+                standings: makeZeroTeams(['Chelsea', 'Arsenal FC', 'Liverpool', 'Manchester City', 'Tottenham', 'Brighton', 'Crystal Palace', 'Man United']),
+                fixtures: []
+            },
+            laliga: {
+                standings: makeZeroTeams(['Real Madrid', 'FC Barcelona', 'Atlético Madrid', 'Real Betis', 'Girona FC', 'Sevilla', 'Valencia C.F.', 'Athletic Bilbao']),
+                fixtures: []
+            },
+            seriea: {
+                standings: makeZeroTeams(['Inter Milan', 'AC Milan', 'Juventus', 'AS Roma', 'Atalanta', 'Fiorentina', 'SS Lazio', 'AS Monaco']),
+                fixtures: []
+            },
+            ligue1: {
+                standings: makeZeroTeams(['Paris Saint-Germain', 'Olympique Marseille', 'Olympique Lyonnais', 'LOSC Lille', 'OGC Nice', 'Stade Rennais', 'Stade Brestois 29', 'Stade de Reims']),
+                fixtures: []
+            }
+        };
+
+        function renderStandings() {
+            const league = document.getElementById('leagueSelect').value;
+            const data = leagueData[league];
+            const body = document.getElementById('standings-body');
+            body.innerHTML = data.standings.map((t, i) => {
+                const gdStr = t.gd === '0' || t.gd === 0 ? '0' : String(t.gd);
+                const gdClass = gdStr.startsWith('+') ? 'gd-pos' : gdStr.startsWith('-') ? 'gd-neg' : 'gd-neu';
+                const rankClass = i < 2 ? 'rank-top' : i >= data.standings.length - 2 ? 'rank-bot' : 'rank-mid';
+                const dots = t.form.length ? t.form.map(f => `<span class="dot dot-${f}"></span>`).join('') : '<span style="color:#333;font-size:11px;">—</span>';
+                return `<div class="table-row">
+                    <div class="td-rank"><span class="rank-strip ${rankClass}"></span>${t.rank}</div>
+                    <div class="td-team"><div class="td-team-badge">${t.badge}</div><span class="td-team-name">${t.name}</span></div>
+                    <div class="td"><div class="form-dots">${dots}</div></div>
+                    <div class="td">${t.p}</div><div class="td">${t.w}</div><div class="td">${t.d}</div>
+                    <div class="td">${t.l}</div><div class="td">${t.gf}</div>
+                    <div class="td ${gdClass}">${gdStr}</div><div class="td-pts">${t.pts}</div>
+                </div>`;
+            }).join('');
+
+            const fBody = document.getElementById('fixtures-body');
+            if (!data.fixtures.length) {
+                fBody.innerHTML = `<div class="empty-state"><div class="empty-icon" style="font-size:1.5rem;opacity:0.3;">📅</div><div class="empty-title" style="margin-top:.5rem;">No Fixtures Yet</div><div class="empty-sub">Fixtures will appear here once the season begins.</div></div>`;
+                return;
+            }
+            let lastDay = '';
+            fBody.innerHTML = data.fixtures.map(f => {
+                let lbl = '';
+                if (f.matchday !== lastDay) { lastDay = f.matchday; lbl = `<div class="fixture-day-label">${f.matchday}</div>`; }
+                return `${lbl}<div class="fixture-card">
+                    <div class="fx-team"><div class="fx-badge">${f.home[0]}</div><span class="fx-name">${f.home}</span></div>
+                    <div class="fx-score-box"><div class="fx-score">${f.score}</div><div class="fx-status ${f.live ? 'live' : ''}">${f.status}</div></div>
+                    <div class="fx-team right"><div class="fx-badge">${f.away[0]}</div><span class="fx-name">${f.away}</span></div>
+                </div>`;
+            }).join('');
+        }
+
+        function showSubTab(tab) {
+            document.getElementById('sub-standings').style.display = tab === 'standings' ? 'block' : 'none';
+            document.getElementById('sub-fixtures').style.display = tab === 'fixtures' ? 'block' : 'none';
+            document.getElementById('btn-stnd').classList.toggle('active', tab === 'standings');
+            document.getElementById('btn-fixtures').classList.toggle('active', tab === 'fixtures');
+        }
+
+        // ── TIERLIST ──
+        const tierData = [
+            {
+                tier: 'diamond', label: 'Diamond', range: '90 – 99 OVR', icon: '💎', count: 3,
+                players: [
+                    { name: 'xVortexPlays', pos: 'CAM', rating: 97, team: 'Real Madrid' },
+                    { name: 'ShadowStrike9', pos: 'ST', rating: 95, team: 'Bayern Munich' },
+                    { name: 'NightOwlFC', pos: 'CB', rating: 92, team: 'Chelsea' },
+                ]
+            },
+            {
+                tier: 'platinum', label: 'Platinum', range: '80 – 89 OVR', icon: '🔷', count: 6,
+                players: [
+                    { name: 'BlitzRunner', pos: 'LW', rating: 88, team: 'Liverpool' },
+                    { name: 'ColdFrontXI', pos: 'CDM', rating: 86, team: 'Inter Milan' },
+                    { name: 'PhantomKick7', pos: 'RB', rating: 85, team: 'PSG' },
+                    { name: 'EliteRaider', pos: 'GK', rating: 84, team: 'Arsenal FC' },
+                    { name: 'StormBreakerZ', pos: 'CM', rating: 83, team: 'Barcelona' },
+                    { name: 'VoidWalker22', pos: 'ST', rating: 81, team: 'Dortmund' },
+                ]
+            },
+            {
+                tier: 'gold', label: 'Gold', range: '75 – 79 OVR', icon: '🥇', count: 8,
+                players: [
+                    { name: 'IronCladFC', pos: 'CB', rating: 79, team: 'Juventus' },
+                    { name: 'SwiftPedalz', pos: 'LM', rating: 78, team: 'Atlético' },
+                    { name: 'GhostDribbler', pos: 'CAM', rating: 77, team: 'Lyon' },
+                    { name: 'TurboTackle', pos: 'CDM', rating: 77, team: 'Leverkusen' },
+                    { name: 'FluxGoalz', pos: 'ST', rating: 76, team: 'Napoli' },
+                    { name: 'ArcFlash88', pos: 'RW', rating: 76, team: 'Sevilla' },
+                    { name: 'ZeroGravFC', pos: 'GK', rating: 75, team: 'Stuttgart' },
+                    { name: 'PulseKickz', pos: 'LB', rating: 75, team: 'Nice' },
+                ]
+            },
+            {
+                tier: 'bronze', label: 'Bronze', range: '0 – 74 OVR', icon: '🥉', count: 10,
+                players: [
+                    { name: 'NewbieKick01', pos: 'ST', rating: 74, team: 'Frankfurt' },
+                    { name: 'FreshCleat', pos: 'CM', rating: 71, team: 'Brighton' },
+                    { name: 'SlowBuildFC', pos: 'CB', rating: 68, team: 'Rennes' },
+                    { name: 'GrassRoot99', pos: 'LW', rating: 66, team: 'Valencia' },
+                    { name: 'TrialRun_X', pos: 'GK', rating: 63, team: 'Brest' },
+                    { name: 'AcademyKid7', pos: 'RB', rating: 60, team: 'Crystal Palace' },
+                    { name: 'RookieShot', pos: 'CAM', rating: 58, team: 'Wolfsburg' },
+                    { name: 'LowKeyPro', pos: 'CDM', rating: 54, team: 'Girona' },
+                    { name: 'UnknownFC_1', pos: 'ST', rating: 48, team: 'Reims' },
+                    { name: 'Starter_VII', pos: 'LB', rating: 42, team: 'Fiorentina' },
+                ]
+            }
+        ];
+
+        function renderTierlist() {
+            const container = document.getElementById('tierlist-content');
+            if (container.innerHTML.trim()) return;
+            container.innerHTML = tierData.map(t => `
+                <div class="tier-section">
+                    <div class="tier-header tier-${t.tier}">
+                        <div class="tier-gem tier-gem-${t.tier}">${t.icon}</div>
+                        <div class="tier-label-wrap">
+                            <div class="tier-name tier-name-${t.tier}">${t.label}</div>
+                            <div class="tier-range">${t.range}</div>
+                        </div>
+                        <div class="tier-count">${t.count} Players</div>
+                    </div>
+                    <div class="tier-players-grid tier-grid-${t.tier}">
+                        ${t.players.map(p => `
+                        <div class="player-card player-card-${t.tier}">
+                            <div class="player-rating rating-${t.tier}">${p.rating}</div>
+                            <div class="player-pos">${p.pos}</div>
+                            <div class="player-avatar">${p.name[0]}</div>
+                            <div class="player-name">${p.name}</div>
+                            <div class="player-team">${p.team}</div>
+                        </div>`).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // ── TRANSFERS ──
+        function showTransferTab(tab) {
+            document.getElementById('sub-transfer-content').style.display = tab === 'transfers' ? 'block' : 'none';
+            document.getElementById('sub-natteams-content').style.display = tab === 'natteams' ? 'block' : 'none';
+            document.getElementById('btn-transfers').classList.toggle('active', tab === 'transfers');
+            document.getElementById('btn-natteams').classList.toggle('active', tab === 'natteams');
+        }
+
+        // ── RULEBOOK ──
+        function toggleRule(header) {
+            header.parentElement.classList.toggle('open');
+        }
+        function rbNavClick(btn, targetId) {
+            document.querySelectorAll('.rb-nav-item').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            const el = document.getElementById(targetId);
+            if (el) { el.scrollIntoView({ behavior: 'smooth', block: 'start' }); el.classList.add('open'); }
+        }
+
+        // ── TEAMS GRID (Overview) ──
+        const allTeams = ['AS Monaco', 'AC Milan', 'Arsenal FC', 'AS Roma', 'Atalanta', 'Athletic Bilbao', 'Atlético Madrid', 'Bayer Leverkusen', 'Bayern Munich', 'Borussia Dortmund', 'Brighton', 'Chelsea', 'Crystal Palace', 'FC Barcelona', 'Fiorentina', 'Frankfurt', 'Girona FC', 'Inter Milan', 'Juventus', 'LOSC Lille', 'Liverpool', 'Manchester City', 'Manchester United', 'Monchengladbach', 'Napoli', 'OGC Nice', 'Olympique Lyonnais', 'Olympique Marseille', 'Paris Saint-Germain', 'RB Leipzig', 'Real Betis', 'Real Madrid', 'SS Lazio', 'Sevilla', 'Stade Brestois 29', 'Stade Rennais', 'Stuttgart', 'Tottenham', 'Valencia C.F.', 'Wolfsburg'];
+        const playersMap = { 'Real Betis': 2, 'Real Madrid': 1 };
+        document.getElementById('teams-grid-overview').innerHTML = allTeams.map(name => {
+            const count = playersMap[name] || 0;
+            return `<div class="team-card"><div class="team-badge"><span class="team-badge-letter">${name[0]}</span></div><div class="team-info"><div class="team-name">${name}</div><div class="team-players">${count} player${count !== 1 ? 's' : ''}</div></div></div>`;
+        }).join('');
+
+        // ── HEADER DROPDOWN ──
+        function toggleDropdown() { document.getElementById('dropdownMenu').classList.toggle('show'); }
+        window.addEventListener('click', (e) => {
+            if (!document.querySelector('.dropdown').contains(e.target)) document.getElementById('dropdownMenu').classList.remove('show');
+            if (!e.target.closest('.profile-dropdown')) document.querySelectorAll('.profile-dropdown-menu.show').forEach(m => m.classList.remove('show'));
+        });
+        document.querySelectorAll('a[href^="#"]').forEach(a => {
+            a.addEventListener('click', function (e) {
+                e.preventDefault();
+                const t = document.querySelector(this.getAttribute('href'));
+                if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+        });
+
+        // ── PROFILE ──
+        function toggleProfileMenu(menu) { menu.classList.toggle('show'); }
+        function logoutUser() { localStorage.removeItem('eglUser'); window.location.reload(); }
+        function createProfilePill(user) {
+            const container = document.createElement('div'); container.className = 'profile-dropdown';
+            const menu = document.createElement('div'); menu.className = 'profile-dropdown-menu';
+            const tc = user.tc || 75;
+            menu.innerHTML = `<div class="profile-dropdown-header">Account</div>
+                <a href="profile designer.html" class="profile-dropdown-item">Profile & Shop <span class="dropdown-badge">${tc} TC</span></a>
+                <a href="Elite Global League Homepage.html#leagues" class="profile-dropdown-item">My Leagues</a>
+                <a href="#" class="profile-dropdown-item">Bot Dashboard</a>
+                <button type="button" class="profile-dropdown-item logout-button">Logout</button>`;
+            const button = document.createElement('button'); button.type = 'button'; button.className = 'profile-pill';
+            button.innerHTML = `<img src="${user.avatar}" class="nav-avatar"><span class="profile-name">${user.username || 'Member'}</span>`;
+            button.addEventListener('click', (e) => { e.stopPropagation(); toggleProfileMenu(menu); });
+            menu.querySelector('.logout-button').addEventListener('click', logoutUser);
+            container.appendChild(button); container.appendChild(menu); return container;
+        }
+        function loadUserProfileNav() {
+            const nav = document.getElementById('navProfile'); if (!nav) return;
+            const stored = localStorage.getItem('eglUser'); if (!stored) return;
+            try { const u = JSON.parse(stored); if (!u || !u.avatar) return; nav.innerHTML = ''; nav.appendChild(createProfilePill(u)); } catch (e) { }
+        }
+        document.addEventListener('DOMContentLoaded', loadUserProfileNav);
+    </script>
+</body>
+
+</html>

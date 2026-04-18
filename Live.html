@@ -1,0 +1,1560 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live | EGLORIA</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg: #080808;
+            --surface: #0c0c0c;
+            --border: #1a1a1a;
+            --border2: #222;
+            --live-red: #ff3b3b;
+            --live-pulse: rgba(255, 59, 59, 0.4);
+            --discord: #5865f2;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background: var(--bg);
+            color: #e0e0e0;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ── HEADER ── */
+        header {
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(12px);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            border-bottom: 0.5px solid rgba(255, 255, 255, 0.07);
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-img {
+            width: 40px;
+            height: 40px;
+            border-radius: 5px;
+        }
+
+        .logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 900;
+            color: #fff;
+        }
+
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-button {
+            background: rgba(255, 255, 255, 0.08);
+            color: #fff;
+            border: 0.5px solid rgba(255, 255, 255, 0.15);
+            padding: 0.55rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background: rgba(5, 5, 5, 0.98);
+            min-width: 250px;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.7);
+            padding: 0.75rem 0;
+            z-index: 1;
+            border: 0.5px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            top: 100%;
+            right: 0;
+            margin-top: 0.5rem;
+        }
+
+        .dropdown-content.show {
+            display: block;
+        }
+
+        .dropdown-category {
+            padding: 0.5rem 1.5rem;
+            color: #444;
+            font-weight: 700;
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            border-bottom: 0.5px solid rgba(255, 255, 255, 0.05);
+            margin-bottom: 0.2rem;
+        }
+
+        .dropdown-item {
+            padding: 0.6rem 1.5rem;
+            color: #777;
+            text-decoration: none;
+            display: block;
+            transition: all 0.15s;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .dropdown-item:hover {
+            background: rgba(255, 255, 255, 0.06);
+            color: #fff;
+            padding-left: 1.75rem;
+        }
+
+        .nav-links {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            gap: 1.75rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: #555;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s;
+            font-size: 0.95rem;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: #fff;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .cta-btn {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border: 0.5px solid rgba(255, 255, 255, 0.18);
+            padding: 0.6rem 1.25rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 700;
+            text-decoration: none;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.9rem;
+        }
+
+        /* ── PAGE ── */
+        .page {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 5.5rem 1.5rem 2rem;
+            display: grid;
+            grid-template-columns: 1fr 340px;
+            gap: 16px;
+            align-items: start;
+            min-height: calc(100vh - 5.5rem);
+        }
+
+        /* ── PLAYER SIDE ── */
+        .player-side {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        /* LIVE PLAYER */
+        .live-player-wrap {
+            background: #000;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 0.5px solid var(--border);
+            position: relative;
+            aspect-ratio: 16/9;
+        }
+
+        /* offline / waiting state */
+        .live-offline {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            background: #000;
+        }
+
+        .offline-orb {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 40% 40%, #1a1a1a, #0a0a0a);
+            border: 1px solid #1e1e1e;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            position: relative;
+        }
+
+        .offline-orb::after {
+            content: '';
+            position: absolute;
+            inset: -8px;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            animation: orbPulse 3s ease-in-out infinite;
+        }
+
+        @keyframes orbPulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 0.5
+            }
+
+            50% {
+                transform: scale(1.1);
+                opacity: 1
+            }
+        }
+
+        .offline-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #333;
+            letter-spacing: 0.06em;
+        }
+
+        .offline-sub {
+            font-size: 13px;
+            color: #2a2a2a;
+            text-align: center;
+            max-width: 300px;
+            line-height: 1.7;
+        }
+
+        .offline-next {
+            background: #111;
+            border: 0.5px solid #1e1e1e;
+            border-radius: 10px;
+            padding: 12px 20px;
+            text-align: center;
+        }
+
+        .offline-next-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.14em;
+            color: #333;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .offline-next-match {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 13px;
+            font-weight: 700;
+            color: #555;
+        }
+
+        .offline-next-time {
+            font-size: 12px;
+            color: #333;
+            margin-top: 2px;
+        }
+
+        /* LIVE indicator (shown when live) */
+        .live-badge-wrap {
+            position: absolute;
+            top: 14px;
+            left: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 5;
+        }
+
+        .live-badge {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background: var(--live-red);
+            color: #fff;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 5px;
+            letter-spacing: 0.1em;
+        }
+
+        .live-dot {
+            width: 6px;
+            height: 6px;
+            background: #fff;
+            border-radius: 50%;
+            animation: liveBlink 1.2s infinite;
+        }
+
+        @keyframes liveBlink {
+
+            0%,
+            100% {
+                opacity: 1
+            }
+
+            50% {
+                opacity: 0.3
+            }
+        }
+
+        .live-viewers {
+            background: rgba(0, 0, 0, 0.7);
+            color: #ccc;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .live-viewers svg {
+            width: 11px;
+            height: 11px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 1.5;
+        }
+
+        /* score overlay */
+        .score-overlay {
+            position: absolute;
+            top: 14px;
+            right: 14px;
+            z-index: 5;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(4px);
+            border: 0.5px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 8px 16px;
+            text-align: center;
+            display: none;
+        }
+
+        .score-overlay.show {
+            display: block;
+        }
+
+        .score-teams {
+            font-size: 11px;
+            color: #888;
+            margin-bottom: 2px;
+        }
+
+        .score-nums {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 900;
+            color: #fff;
+            letter-spacing: 0.06em;
+        }
+
+        .score-min {
+            font-size: 10px;
+            color: #555;
+            margin-top: 2px;
+        }
+
+        /* ── MATCH INFO CARD ── */
+        .match-info-card {
+            background: var(--surface);
+            border: 0.5px solid var(--border);
+            border-radius: 14px;
+            padding: 16px 20px;
+        }
+
+        .match-info-top {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+
+        .match-live-pill {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            padding: 4px 10px;
+            border-radius: 999px;
+        }
+
+        .pill-live {
+            background: rgba(255, 59, 59, 0.12);
+            color: var(--live-red);
+            border: 0.5px solid rgba(255, 59, 59, 0.3);
+        }
+
+        .pill-live .live-dot2 {
+            width: 5px;
+            height: 5px;
+            background: var(--live-red);
+            border-radius: 50%;
+            animation: liveBlink 1.2s infinite;
+        }
+
+        .pill-offline {
+            background: #111;
+            color: #444;
+            border: 0.5px solid #1e1e1e;
+        }
+
+        .match-competition {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 11px;
+            color: #555;
+            font-weight: 700;
+        }
+
+        .match-teams-row {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 14px;
+        }
+
+        .match-team {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .match-team-badge {
+            width: 44px;
+            height: 44px;
+            background: #161616;
+            border: 0.5px solid #222;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            color: #555;
+        }
+
+        .match-team-name {
+            font-size: 13px;
+            font-weight: 700;
+            color: #ccc;
+            text-align: center;
+        }
+
+        .match-score-center {
+            text-align: center;
+        }
+
+        .match-score-big {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            font-weight: 900;
+            color: #fff;
+            letter-spacing: 0.08em;
+            line-height: 1;
+        }
+
+        .match-score-label {
+            font-size: 10px;
+            color: #333;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            margin-top: 4px;
+        }
+
+        .match-info-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: 12px;
+            border-top: 0.5px solid #111;
+        }
+
+        .match-footer-item {
+            text-align: center;
+        }
+
+        .match-footer-label {
+            font-size: 10px;
+            color: #333;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+
+        .match-footer-value {
+            font-size: 13px;
+            font-weight: 700;
+            color: #777;
+        }
+
+        /* ── SCHEDULED MATCHES ── */
+        .schedule-card {
+            background: var(--surface);
+            border: 0.5px solid var(--border);
+            border-radius: 14px;
+            padding: 16px;
+        }
+
+        .schedule-title {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.14em;
+            color: #333;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .schedule-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 0.5px solid #0f0f0f;
+        }
+
+        .schedule-item:last-child {
+            border-bottom: none;
+        }
+
+        .schedule-teams {
+            font-size: 13px;
+            font-weight: 700;
+            color: #888;
+        }
+
+        .schedule-vs {
+            font-size: 11px;
+            color: #333;
+            margin: 0 6px;
+        }
+
+        .schedule-time {
+            font-size: 12px;
+            color: #444;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .schedule-comp {
+            font-size: 10px;
+            color: #2a2a2a;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        /* ── CHAT SIDE ── */
+        .chat-side {
+            display: flex;
+            flex-direction: column;
+            background: var(--surface);
+            border: 0.5px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+            height: calc(100vh - 7rem);
+            position: sticky;
+            top: 5.5rem;
+        }
+
+        .chat-header {
+            padding: 14px 16px;
+            border-bottom: 0.5px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
+        .chat-header-icon {
+            font-size: 1.1rem;
+        }
+
+        .chat-header-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 13px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .chat-online-count {
+            margin-left: auto;
+            font-size: 11px;
+            color: #4ade80;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .chat-online-dot {
+            width: 6px;
+            height: 6px;
+            background: #4ade80;
+            border-radius: 50%;
+        }
+
+        /* chat tabs */
+        .chat-tabs {
+            display: flex;
+            border-bottom: 0.5px solid var(--border);
+            flex-shrink: 0;
+        }
+
+        .chat-tab {
+            flex: 1;
+            padding: 9px 0;
+            text-align: center;
+            font-size: 12px;
+            font-weight: 700;
+            color: #444;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            font-family: 'Rajdhani', sans-serif;
+            border-bottom: 2px solid transparent;
+            transition: color 0.15s;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+
+        .chat-tab:hover {
+            color: #888;
+        }
+
+        .chat-tab.active {
+            color: #fff;
+            border-bottom-color: #fff;
+        }
+
+        /* messages */
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 12px 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .chat-messages::-webkit-scrollbar {
+            width: 3px;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: #1e1e1e;
+            border-radius: 2px;
+        }
+
+        .chat-msg {
+            display: flex;
+            gap: 8px;
+            align-items: flex-start;
+            padding: 4px 6px;
+            border-radius: 8px;
+            transition: background 0.1s;
+            animation: chatFade 0.2s ease;
+        }
+
+        @keyframes chatFade {
+            from {
+                opacity: 0;
+                transform: translateY(4px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+
+        .chat-msg:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .chat-msg-avatar {
+            width: 24px;
+            height: 24px;
+            border-radius: 5px;
+            background: #161616;
+            border: 0.5px solid #222;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 9px;
+            font-weight: 700;
+            color: #555;
+            font-family: 'Orbitron', sans-serif;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .chat-msg-body {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .chat-msg-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 1px;
+        }
+
+        .chat-msg-author {
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .chat-msg-author.admin {
+            color: #f5c842;
+        }
+
+        .chat-msg-author.mod {
+            color: #5b8dee;
+        }
+
+        .chat-msg-author.user {
+            color: #aaa;
+        }
+
+        .chat-msg-badge {
+            font-size: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            padding: 1px 5px;
+            border-radius: 3px;
+            font-weight: 700;
+        }
+
+        .badge-admin {
+            background: rgba(245, 200, 66, 0.15);
+            color: #f5c842;
+        }
+
+        .badge-mod {
+            background: rgba(91, 141, 238, 0.15);
+            color: #5b8dee;
+        }
+
+        .chat-msg-time {
+            font-size: 10px;
+            color: #2a2a2a;
+            margin-left: auto;
+        }
+
+        .chat-msg-text {
+            font-size: 13px;
+            color: #777;
+            line-height: 1.5;
+            word-break: break-word;
+        }
+
+        .chat-msg-text .chat-emote {
+            font-size: 1rem;
+        }
+
+        .chat-msg.highlight {
+            background: rgba(245, 200, 66, 0.05);
+            border-left: 2px solid rgba(245, 200, 66, 0.3);
+        }
+
+        .chat-msg.event-msg .chat-msg-text {
+            color: #4ade80;
+            font-weight: 700;
+        }
+
+        /* pinned message */
+        .chat-pinned {
+            background: rgba(245, 200, 66, 0.06);
+            border: 0.5px solid rgba(245, 200, 66, 0.15);
+            border-radius: 8px;
+            padding: 8px 12px;
+            margin: 8px 14px 0;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .chat-pinned-icon {
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+
+        .chat-pinned-text {
+            font-size: 12px;
+            color: #888;
+            line-height: 1.5;
+        }
+
+        .chat-pinned-text strong {
+            color: #f5c842;
+        }
+
+        /* composer */
+        .chat-composer {
+            padding: 12px 14px;
+            border-top: 0.5px solid var(--border);
+            flex-shrink: 0;
+        }
+
+        .chat-input-row {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 8px;
+        }
+
+        .chat-name-input {
+            background: #111;
+            border: 0.5px solid #1a1a1a;
+            color: #aaa;
+            padding: 8px 10px;
+            border-radius: 7px;
+            font-size: 11px;
+            font-weight: 700;
+            font-family: 'Rajdhani', sans-serif;
+            outline: none;
+            width: 110px;
+            flex-shrink: 0;
+        }
+
+        .chat-text-input {
+            flex: 1;
+            background: #111;
+            border: 0.5px solid #1a1a1a;
+            color: #ccc;
+            padding: 8px 12px;
+            border-radius: 7px;
+            font-size: 13px;
+            font-weight: 600;
+            font-family: 'Rajdhani', sans-serif;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .chat-text-input:focus {
+            border-color: #2a2a2a;
+        }
+
+        .chat-text-input::placeholder {
+            color: #2a2a2a;
+        }
+
+        .chat-send-btn {
+            background: #fff;
+            color: #000;
+            border: none;
+            padding: 0 14px;
+            border-radius: 7px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: 'Rajdhani', sans-serif;
+            flex-shrink: 0;
+            transition: opacity 0.15s;
+        }
+
+        .chat-send-btn:hover {
+            opacity: 0.85;
+        }
+
+        /* emoji quick row */
+        .chat-emoji-row {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .chat-emoji-btn {
+            background: #111;
+            border: 0.5px solid #1a1a1a;
+            border-radius: 5px;
+            padding: 3px 7px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+
+        .chat-emoji-btn:hover {
+            background: #1a1a1a;
+        }
+
+        /* ── DISCORD FLOATING LINK ── */
+        .discord-float {
+            position: fixed;
+            bottom: 28px;
+            left: 28px;
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(88, 101, 242, 0.12);
+            border: 1px solid rgba(88, 101, 242, 0.35);
+            backdrop-filter: blur(8px);
+            border-radius: 14px;
+            padding: 12px 18px;
+            text-decoration: none;
+            color: #fff;
+            transition: all 0.2s;
+            box-shadow: 0 4px 20px rgba(88, 101, 242, 0.2);
+            animation: discordEntrance 0.8s cubic-bezier(.16, 1, .3, 1) 0.5s both;
+        }
+
+        @keyframes discordEntrance {
+            from {
+                opacity: 0;
+                transform: translateY(20px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+
+        .discord-float:hover {
+            background: rgba(88, 101, 242, 0.25);
+            border-color: rgba(88, 101, 242, 0.6);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(88, 101, 242, 0.35);
+        }
+
+        .discord-float-icon {
+            width: 34px;
+            height: 34px;
+            background: var(--discord);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .discord-float-icon svg {
+            width: 20px;
+            height: 20px;
+            fill: #fff;
+        }
+
+        .discord-float-text {}
+
+        .discord-float-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: #888;
+            font-weight: 700;
+            margin-bottom: 1px;
+        }
+
+        .discord-float-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 12px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .discord-float-sub {
+            font-size: 10px;
+            color: #5865f2;
+            margin-top: 1px;
+        }
+
+        .discord-float-arrow {
+            margin-left: 6px;
+            color: #5865f2;
+            font-size: 14px;
+        }
+
+        /* pulse ring on discord button */
+        .discord-float::before {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            border-radius: 18px;
+            border: 1px solid rgba(88, 101, 242, 0.2);
+            animation: discordRing 2.5s ease-in-out infinite;
+        }
+
+        @keyframes discordRing {
+
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 0.4
+            }
+
+            50% {
+                transform: scale(1.03);
+                opacity: 0.8
+            }
+        }
+
+        /* ── OFFLINE BANNER ── */
+        .offline-banner {
+            background: #0c0c0c;
+            border: 0.5px solid #1a1a1a;
+            border-top: 2px solid var(--live-red);
+            border-radius: 12px;
+            padding: 14px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .offline-banner-dot {
+            width: 8px;
+            height: 8px;
+            background: #2a2a2a;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .offline-banner-dot.live {
+            background: var(--live-red);
+            animation: liveBlink 1.2s infinite;
+        }
+
+        .offline-banner-text {
+            font-size: 13px;
+            font-weight: 700;
+            color: #555;
+        }
+
+        .offline-banner-text.live {
+            color: #ccc;
+        }
+
+        .go-live-btn {
+            margin-left: auto;
+            background: var(--live-red);
+            color: #fff;
+            border: none;
+            padding: 6px 16px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: 'Rajdhani', sans-serif;
+            transition: opacity 0.15s;
+        }
+
+        .go-live-btn:hover {
+            opacity: 0.85;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ── HEADER ── -->
+    <header>
+        <div class="logo-container">
+            <img src="c:\Users\kopano\Downloads\EGL GLOW.png" alt="EGLORIA" class="logo-img">
+            <div class="logo">EGLORIA</div>
+            <div class="dropdown">
+                <button class="dropdown-button" onclick="toggleDropdown()">☰</button>
+                <div class="dropdown-content" id="dropdownMenu">
+                    <div class="dropdown-category">News & Media</div>
+                    <a href="news.html" class="dropdown-item">News</a>
+                    <a href="community-clips.html" class="dropdown-item">Community Clips</a>
+                    <a href="community.html" class="dropdown-item">Community Hub</a>
+                    <div class="dropdown-category">Transfers & Teams</div>
+                    <a href="#Teams" class="dropdown-item">Teams</a>
+                    <a href="#Transfers" class="dropdown-item">Transfers</a>
+                    <div class="dropdown-category">Support Us</div>
+                    <a href="#advertise" class="dropdown-item">Advertise</a>
+                </div>
+            </div>
+        </div>
+        <nav class="nav-links">
+            <a href="Elite Global League Homepage.html">Home</a>
+            <a href="news.html">News</a>
+            <a href="profile designer.html">Shop</a>
+            <a href="Stats.html">League</a>
+            <a href="live.html">Live</a>
+            <a href="community.html">Community</a>
+        </nav>
+        <div class="nav-actions" id="navProfile">
+            <a href="login.html" class="cta-btn">Login</a>
+        </div>
+    </header>
+
+    <!-- ── DISCORD FLOAT ── -->
+    <a class="discord-float" href="https://discord.gg/VgXbwbHYUn" target="_blank" id="discordFloat">
+        <div class="discord-float-icon">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path
+                    d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057c.002.022.015.043.032.056a19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z" />
+            </svg>
+        </div>
+        <div class="discord-float-text">
+            <div class="discord-float-label">Watch Live On</div>
+            <div class="discord-float-title">Discord Server</div>
+            <div class="discord-float-sub">Join the broadcast →</div>
+        </div>
+    </a>
+
+    <!-- ── PAGE ── -->
+    <div class="page">
+
+        <!-- PLAYER SIDE -->
+        <div class="player-side">
+
+            <!-- STATUS BANNER -->
+            <div class="offline-banner" id="statusBanner">
+                <div class="offline-banner-dot" id="statusDot"></div>
+                <div class="offline-banner-text" id="statusText">No match live right now</div>
+                <button class="go-live-btn" onclick="toggleLive()">Go Live (Admin)</button>
+            </div>
+
+            <!-- VIDEO PLAYER -->
+            <div class="live-player-wrap" id="playerWrap">
+
+                <!-- OFFLINE STATE -->
+                <div class="live-offline" id="offlineState">
+                    <div class="offline-orb">📺</div>
+                    <div class="offline-title">No Broadcast Active</div>
+                    <div class="offline-sub">The next match will be streamed here. Join our Discord to be notified when
+                        we go live.</div>
+                    <div class="offline-next">
+                        <div class="offline-next-label">Next Scheduled Match</div>
+                        <div class="offline-next-match" id="nextMatch">TBD vs TBD</div>
+                        <div class="offline-next-time" id="nextMatchTime">Date to be announced</div>
+                    </div>
+                </div>
+
+                <!-- LIVE STATE (hidden by default) -->
+                <div id="liveState"
+                    style="display:none;width:100%;height:100%;position:absolute;inset:0;background:#0a0a0a;display:none;align-items:center;justify-content:center;flex-direction:column;gap:12px">
+                    <div style="font-size:4rem">🔴</div>
+                    <div style="font-family:'Orbitron',sans-serif;font-size:14px;color:#f87171;letter-spacing:0.1em">
+                        BROADCASTING LIVE</div>
+                    <div style="font-size:12px;color:#444">Stream appears on Discord — click the button below left</div>
+                </div>
+
+                <!-- LIVE BADGE (shown when live) -->
+                <div class="live-badge-wrap" id="liveBadgeWrap" style="display:none">
+                    <div class="live-badge">
+                        <div class="live-dot"></div> LIVE
+                    </div>
+                    <div class="live-viewers"><svg viewBox="0 0 24 24">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                            <circle cx="12" cy="12" r="3" />
+                        </svg><span id="viewerCount">0</span></div>
+                </div>
+
+                <!-- SCORE OVERLAY -->
+                <div class="score-overlay" id="scoreOverlay">
+                    <div class="score-teams"><span id="scoreTeam1">TBD</span> vs <span id="scoreTeam2">TBD</span></div>
+                    <div class="score-nums"><span id="score1">0</span> – <span id="score2">0</span></div>
+                    <div class="score-min" id="scoreMin">0'</div>
+                </div>
+
+            </div>
+
+            <!-- MATCH INFO -->
+            <div class="match-info-card" id="matchInfoCard">
+                <div class="match-info-top">
+                    <div class="match-live-pill pill-offline" id="matchLivePill">
+                        <span>Offline</span>
+                    </div>
+                    <div class="match-competition" id="matchComp">EGL — Matchday TBD</div>
+                </div>
+                <div class="match-teams-row">
+                    <div class="match-team">
+                        <div class="match-team-badge" id="badge1">TBD</div>
+                        <div class="match-team-name" id="team1Name">TBD</div>
+                    </div>
+                    <div class="match-score-center">
+                        <div class="match-score-big" id="scoreBig">0 – 0</div>
+                        <div class="match-score-label" id="scoreLabel">Upcoming</div>
+                    </div>
+                    <div class="match-team">
+                        <div class="match-team-badge" id="badge2">TBD</div>
+                        <div class="match-team-name" id="team2Name">TBD</div>
+                    </div>
+                </div>
+                <div class="match-info-footer">
+                    <div class="match-footer-item">
+                        <div class="match-footer-label">League</div>
+                        <div class="match-footer-value" id="footerLeague">—</div>
+                    </div>
+                    <div class="match-footer-item">
+                        <div class="match-footer-label">Matchday</div>
+                        <div class="match-footer-value" id="footerMD">—</div>
+                    </div>
+                    <div class="match-footer-item">
+                        <div class="match-footer-label">Referee</div>
+                        <div class="match-footer-value" id="footerRef">—</div>
+                    </div>
+                    <div class="match-footer-item">
+                        <div class="match-footer-label">Streamer</div>
+                        <div class="match-footer-value" id="footerStreamer">—</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SCHEDULE -->
+            <div class="schedule-card">
+                <div class="schedule-title">📅 Upcoming Broadcasts</div>
+                <div id="scheduleList">
+                    <div class="schedule-item">
+                        <div>
+                            <div class="schedule-teams">Borussia Dortmund <span class="schedule-vs">vs</span> Fiorentina
+                            </div>
+                            <div class="schedule-comp">UEFA Champions league · GW1</div>
+                        </div>
+                        <div class="schedule-time">TBD</div>
+                    </div>
+                    <div class="schedule-item">
+                        <div>
+                            <div class="schedule-teams">Napoli <span class="schedule-vs">vs</span> atalanta</div>
+                            <div class="schedule-comp">UEFA Champions league · GW1</div>
+                        </div>
+                        <div class="schedule-time">TBD</div>
+                    </div>
+                    <div class="schedule-item">
+                        <div>
+                            <div class="schedule-teams">inter milan <span class="schedule-vs">vs</span> ac milan</div>
+                            <div class="schedule-comp">UEFA Champions league · GW1</div>
+                        </div>
+                        <div class="schedule-time">TBD</div>
+                    </div>
+                    <div class="schedule-item">
+                        <div>
+                            <div class="schedule-teams">Atletico madrid <span class="schedule-vs">vs</span> Barcelona FC
+                            </div>
+                            <div class="schedule-comp">UEFA Champions league · GW1</div>
+                        </div>
+                        <div class="schedule-time">TBD</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- CHAT SIDE -->
+        <div class="chat-side">
+
+            <div class="chat-header">
+                <div class="chat-header-icon">💬</div>
+                <div class="chat-header-title">Live Chat</div>
+                <div class="chat-online-count">
+                    <div class="chat-online-dot"></div><span id="onlineCount">1</span> online
+                </div>
+            </div>
+
+            <div class="chat-pinned" id="pinnedMsg">
+                <div class="chat-pinned-icon">📌</div>
+                <div class="chat-pinned-text"><strong>Welcome to EGL Live!</strong> Keep chat clean. No spam. Use
+                    <strong>#EGLLive</strong> on socials.
+                </div>
+            </div>
+
+            <div class="chat-tabs">
+                <button class="chat-tab active" onclick="setChatTab('chat',this)">Chat</button>
+                <button class="chat-tab" onclick="setChatTab('goals',this)">⚽ Goals</button>
+                <button class="chat-tab" onclick="setChatTab('poll',this)">📊 Poll</button>
+            </div>
+
+            <!-- CHAT TAB -->
+            <div id="chatTabPanel" class="chat-messages" id="chatMessages"></div>
+
+            <!-- GOALS TAB -->
+            <div id="goalsTabPanel" style="display:none;flex:1;overflow-y:auto;padding:12px 14px;">
+                <div id="goalsList" style="display:flex;flex-direction:column;gap:8px;">
+                    <div
+                        style="text-align:center;padding:2rem 0;font-family:'Orbitron',sans-serif;font-size:12px;color:#2a2a2a;">
+                        No goals recorded yet</div>
+                </div>
+            </div>
+
+            <!-- POLL TAB -->
+            <div id="pollTabPanel" style="display:none;flex:1;overflow-y:auto;padding:12px 14px;">
+                <div style="background:#111;border:0.5px solid #1e1e1e;border-radius:12px;padding:16px;">
+                    <div
+                        style="font-family:'Orbitron',sans-serif;font-size:13px;font-weight:700;color:#ccc;margin-bottom:12px;">
+                        Who wins tonight?</div>
+                    <div id="pollOptions"></div>
+                    <div style="font-size:11px;color:#333;margin-top:10px;text-align:right;" id="pollTotal">0 votes
+                    </div>
+                </div>
+            </div>
+
+            <div class="chat-composer">
+                <div class="chat-input-row">
+                    <input type="text" class="chat-name-input" id="chatName" placeholder="Username" maxlength="20">
+                    <input type="text" class="chat-text-input" id="chatInput" placeholder="Say something..."
+                        maxlength="200" onkeydown="if(event.key==='Enter')sendChat()">
+                    <button class="chat-send-btn" onclick="sendChat()">→</button>
+                </div>
+                <div class="chat-emoji-row">
+                    <button class="chat-emoji-btn" onclick="addEmoji('⚽')">⚽</button>
+                    <button class="chat-emoji-btn" onclick="addEmoji('🔥')">🔥</button>
+                    <button class="chat-emoji-btn" onclick="addEmoji('👏')">👏</button>
+                    <button class="chat-emoji-btn" onclick="addEmoji('😮')">😮</button>
+                    <button class="chat-emoji-btn" onclick="addEmoji('💀')">💀</button>
+                    <button class="chat-emoji-btn" onclick="addEmoji('🏆')">🏆</button>
+                    <button class="chat-emoji-btn" onclick="addEmoji('😂')">😂</button>
+                    <button class="chat-emoji-btn" onclick="addEmoji('❤️')">❤️</button>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <script>
+        // ── LIVE STATE ──
+        let isLive = false;
+        let viewerSim = 0;
+        let minuteSim = 0;
+        let minuteTimer = null;
+
+        function toggleLive() {
+            isLive = !isLive;
+            updateLiveUI();
+            if (isLive) {
+                startMatchSim();
+                systemMsg('🔴 The broadcast has started! Welcome to EGL Live!', 'event-msg');
+                viewerSim = Math.floor(Math.random() * 40) + 10;
+                setInterval(() => {
+                    viewerSim += Math.floor(Math.random() * 3) - 1;
+                    viewerSim = Math.max(1, viewerSim);
+                    document.getElementById('viewerCount').textContent = viewerSim;
+                    document.getElementById('onlineCount').textContent = viewerSim + Math.floor(Math.random() * 5);
+                }, 4000);
+            } else {
+                stopMatchSim();
+                systemMsg('📴 The broadcast has ended. Thanks for watching!', 'event-msg');
+            }
+        }
+
+        function updateLiveUI() {
+            // banner
+            const dot = document.getElementById('statusDot');
+            const text = document.getElementById('statusText');
+            dot.classList.toggle('live', isLive);
+            text.classList.toggle('live', isLive);
+            text.textContent = isLive ? '🔴 LIVE NOW — Match in progress' : 'No match live right now';
+
+            // player
+            document.getElementById('offlineState').style.display = isLive ? 'none' : 'flex';
+            const liveState = document.getElementById('liveState');
+            liveState.style.display = isLive ? 'flex' : 'none';
+            document.getElementById('liveBadgeWrap').style.display = isLive ? 'flex' : 'none';
+            document.getElementById('scoreOverlay').classList.toggle('show', isLive);
+
+            // pill
+            const pill = document.getElementById('matchLivePill');
+            pill.className = 'match-live-pill ' + (isLive ? 'pill-live' : 'pill-offline');
+            pill.innerHTML = isLive ? '<div class="live-dot2"></div> LIVE' : 'Offline';
+
+            if (isLive) {
+                document.getElementById('scoreTeam1').textContent = 'Chelsea';
+                document.getElementById('scoreTeam2').textContent = 'Bayern';
+                document.getElementById('team1Name').textContent = 'Chelsea';
+                document.getElementById('team2Name').textContent = 'Bayern Munich';
+                document.getElementById('badge1').textContent = 'C';
+                document.getElementById('badge2').textContent = 'B';
+                document.getElementById('matchComp').textContent = 'EGL — Bundesliga · Matchday 1';
+                document.getElementById('footerLeague').textContent = 'Bundesliga';
+                document.getElementById('footerMD').textContent = 'MD1';
+                document.getElementById('footerRef').textContent = 'EGL_Ref01';
+                document.getElementById('footerStreamer').textContent = 'KopanoXI';
+                document.getElementById('scoreLabel').textContent = "LIVE";
+                document.getElementById('nextMatch').textContent = 'Chelsea vs Bayern Munich';
+            }
+        }
+
+        // ── MATCH SIMULATION ──
+        let s1 = 0, s2 = 0;
+        function startMatchSim() {
+            minuteSim = 0;
+            minuteTimer = setInterval(() => {
+                minuteSim++;
+                document.getElementById('scoreMin').textContent = minuteSim + "'";
+                document.getElementById('scoreBig').textContent = s1 + ' – ' + s2;
+                if (minuteSim >= 90) { stopMatchSim(); systemMsg("⏱️ Full time! Thanks for watching.", 'event-msg'); }
+            }, 1500); // fast sim for demo
+        }
+        function stopMatchSim() { if (minuteTimer) { clearInterval(minuteTimer); minuteTimer = null; } }
+
+        // ── CHAT ──
+        const bots = [
+            { name: 'SWATYYYY', role: 'user' },
+            { name: 'KopanoXI', role: 'admin' },
+            { name: 'VortexPlays', role: 'user' },
+            { name: 'NightOwlFC', role: 'mod' },
+            { name: 'BlitzRunner', role: 'user' },
+            { name: 'PhantomKick7', role: 'user' },
+            { name: 'EGL_Admin', role: 'admin' },
+            { name: 'ModSquad', role: 'mod' },
+        ];
+
+        let msgId = 0;
+        const chatMessages = document.getElementById('chatTabPanel');
+
+        function appendMsg(el) {
+            chatMessages.appendChild(el);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            // keep max 100 messages
+            while (chatMessages.children.length > 100) chatMessages.removeChild(chatMessages.firstChild);
+        }
+
+        function sendChat() {
+            const nameEl = document.getElementById('chatName');
+            const inputEl = document.getElementById('chatInput');
+            const name = nameEl.value.trim() || 'Viewer';
+            const text = inputEl.value.trim();
+            if (!text) return;
+            addChatMsg(name, text, 'user');
+            inputEl.value = '';
+        }
+
+        function addEmoji(e) {
+            document.getElementById('chatInput').value += e;
+            document.getElementById('chatInput').focus();
+        }
+
+        function addChatMsg(author, text, role, extra) {
+            const div = document.createElement('div');
+            div.className = 'chat-msg ' + (extra || '');
+            const badgeHtml = role === 'admin' ? '<span class="chat-msg-badge badge-admin">ADMIN</span>' : role === 'mod' ? '<span class="chat-msg-badge badge-mod">MOD</span>' : '';
+            div.innerHTML = `
+                <div class="chat-msg-avatar">${author[0].toUpperCase()}</div>
+                <div class="chat-msg-body">
+                    <div class="chat-msg-header">
+                        <span class="chat-msg-author ${role}">${author}</span>
+                        ${badgeHtml}
+                        <span class="chat-msg-time">${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                    </div>
+                    <div class="chat-msg-text">${text}</div>
+                </div>`;
+            appendMsg(div);
+        }
+
+        function systemMsg(text, cls) {
+            const div = document.createElement('div');
+            div.className = 'chat-msg ' + (cls || 'event-msg');
+            div.innerHTML = `<div class="chat-msg-body" style="width:100%"><div class="chat-msg-text" style="color:#4ade80;font-weight:700;text-align:center;padding:4px 0;">${text}</div></div>`;
+            appendMsg(div);
+        }
+
+        // Bot simulation
+        function simulateBotMsg() {
+            const bot = bots[Math.floor(Math.random() * bots.length)];
+            const msg = botMsgs[Math.floor(Math.random() * botMsgs.length)];
+            addChatMsg(bot.name, msg, bot.role);
+        }
+
+        // Initial system message
+        systemMsg('👋 Welcome to EGL Live Chat! Be respectful and enjoy the match.');
+
+        // Simulate bot messages periodically
+        setInterval(() => {
+            if (Math.random() > 0.35) simulateBotMsg();
+        }, 3000 + Math.random() * 4000);
+
+        // ── CHAT TABS ──
+        function setChatTab(tab, btn) {
+            document.querySelectorAll('.chat-tab').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            document.getElementById('chatTabPanel').style.display = tab === 'chat' ? 'flex' : 'none';
+            document.getElementById('goalsTabPanel').style.display = tab === 'goals' ? 'block' : 'none';
+            document.getElementById('pollTabPanel').style.display = tab === 'poll' ? 'block' : 'none';
+        }
+
+        // ── POLL ──
+        const pollData = [
+            { label: 'Chelsea Win', votes: 0 },
+            { label: 'Bayern Win', votes: 0 },
+            { label: 'Draw', votes: 0 },
+        ];
+        function renderPoll() {
+            const total = pollData.reduce((a, p) => a + p.votes, 0);
+            document.getElementById('pollTotal').textContent = total + ' vote' + (total !== 1 ? 's' : '');
+            document.getElementById('pollOptions').innerHTML = pollData.map((p, i) => {
+                const pct = total ? Math.round(p.votes / total * 100) : 0;
+                return `<div style="margin-bottom:10px">
+                    <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+                        <span style="font-size:13px;font-weight:700;color:#aaa">${p.label}</span>
+                        <span style="font-family:'Orbitron',sans-serif;font-size:11px;color:#555">${pct}%</span>
+                    </div>
+                    <div style="background:#1a1a1a;border-radius:999px;height:6px;overflow:hidden;cursor:pointer" onclick="votePoll(${i})">
+                        <div style="height:100%;background:#fff;border-radius:999px;width:${pct}%;transition:width 0.4s"></div>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+        function votePoll(idx) {
+            if (localStorage.getItem('egl_poll_voted')) { return; }
+            pollData[idx].votes++;
+            localStorage.setItem('egl_poll_voted', '1');
+            renderPoll();
+        }
+        renderPoll();
+
+        // ── DROPDOWN ──
+        function toggleDropdown() { document.getElementById('dropdownMenu').classList.toggle('show'); }
+        window.addEventListener('click', e => {
+            if (!document.querySelector('.dropdown').contains(e.target)) document.getElementById('dropdownMenu').classList.remove('show');
+        });
+
+        // ── INIT ──
+        document.getElementById('chatTabPanel').style.display = 'flex';
+        document.getElementById('chatTabPanel').style.flexDirection = 'column';
+        document.getElementById('chatTabPanel').style.gap = '2px';
+    </script>
+
+</body>
+
+</html>
